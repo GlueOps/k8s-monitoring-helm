@@ -1,0 +1,30 @@
+apiVersion: v2
+name: glueops-monitoring
+description: GlueOps umbrella chart that deploys the cluster monitoring stack (Prometheus, Thanos, Loki, OpenTelemetry)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+dependencies:
+  - name: kube-prometheus-stack
+    version: "70.7.0"
+    repository: "https://prometheus-community.github.io/helm-charts"
+  - name: thanos
+    version: "16.0.3"
+    repository: "https://charts.bitnami.com/bitnami"
+  - name: loki
+    version: "6.29.0"
+    repository: "https://grafana.github.io/helm-charts"
+  - name: opentelemetry-operator
+    version: "0.87.0"
+    repository: "https://open-telemetry.github.io/opentelemetry-helm-charts"
+  - name: grafana
+    version: "8.13.0"
+    repository: "https://grafana.github.io/helm-charts"
+  - name: grafana
+    alias: grafana-admin
+    version: "8.13.0"
+    repository: "https://grafana.github.io/helm-charts"
+  - name: grafana
+    alias: grafana-dev
+    version: "8.13.0"
+    repository: "https://grafana.github.io/helm-charts"
