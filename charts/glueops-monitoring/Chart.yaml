@@ -17,14 +17,14 @@ dependencies:
   - name: opentelemetry-operator
     version: "0.87.0"
     repository: "https://open-telemetry.github.io/opentelemetry-helm-charts"
-  #- name: grafana
-  #  version: "8.13.0"
-  #  repository: "https://grafana.github.io/helm-charts"
-  #- name: grafana
-  #  alias: grafana-admin
-  #  version: "8.13.0"
-  #  repository: "https://grafana.github.io/helm-charts"
-  #- name: grafana
-  #  alias: grafana-dev
-  #  version: "8.13.0"
-  #  repository: "https://grafana.github.io/helm-charts"
+  - name: grafana
+    version: "8.13.0"
+    repository: "https://grafana.github.io/helm-charts"
+  - name: grafana
+    alias: grafana-admin
+    version: "8.13.0"
+    repository: "https://grafana.github.io/helm-charts"
+  - name: grafana
+    alias: grafana-dev
+    version: "8.13.0"
+    repository: "https://grafana.github.io/helm-charts"
