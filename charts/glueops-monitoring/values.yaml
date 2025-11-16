@@ -136,3 +136,35 @@ grafana-dev:
           secureJsonData:
             httpHeaderValue1: "{{ .Values.captain_domain }}"
 
+tempo:
+  image:
+    tag: "2.7.2"
+  compactor:
+    config:
+      compaction:
+        block_retention: "{{ .Values.tempo.compaction_block_retention | default \"48h\" }}"
+  multitenancyEnabled: true
+  gateway:
+    enabled: true
+  metaMonitoring:
+    serviceMonitor:
+      enabled: true
+  ingester:
+    config:
+      flush_check_period: 10s
+      flush_all_on_shutdown: true
+      complete_block_timeout: 1m
+      max_block_bytes: 524288000
+      trace_idle_period: 10s
+  server:
+    grpc_server_max_recv_msg_size: 81194305
+    grpc_server_max_send_msg_size: 81194305
+  storage: {}
+  traces:
+    otlp:
+      http:
+        enabled: true
+      grpc:
+        enabled: true
+        max_recv_msg_size_mib: 8194305
+
