@@ -1,0 +1,160 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: glueops-monitoring
+  namespace: glueops-core
+spec:
+  destination:
+    name: "in-cluster"
+    namespace: glueops-core
+  project: glueops-core
+  syncPolicy:
+    syncOptions:
+      - Replace=true
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m0s
+      limit: 5
+  source:
+    repoURL: https://helm.gpkg.io/project-template
+    chart: app
+    targetRevision: 0.8.1
+    helm:
+      values: |
+        appName: 'glueops-monitoring-apps'
+        customResources:
+          - |-
+            apiVersion: argoproj.io/v1alpha1
+            kind: Application
+            metadata:
+              name: glueops-core-grafana-dev
+              namespace: glueops-core
+            spec:
+              destination:
+                name: "in-cluster"
+                namespace: glueops-core-grafana-dev
+              project: glueops-core
+              syncPolicy:
+                syncOptions:
+                  - Replace=true
+                automated:
+                  prune: true
+                  selfHeal: true
+                retry:
+                  backoff:
+                    duration: 10s
+                    factor: 2
+                    maxDuration: 3m0s
+                  limit: 5
+              source:
+                repoURL: https://grafana.github.io/helm-charts
+                chart: app
+                targetRevision: 8.13.0
+                helm:
+                  values: |
+                    enabled: true
+                    fullnameOverride: "grafana"
+                    adminPassword: "{{ .Values.grafana.admin_password | default \"changeme\" }}"
+                    sidecar:
+                      dashboards:
+                        enabled: true
+                        label: grafana_developer_dashboard
+                      defaultDatasourceEnabled: false
+                      isDefaultDatasource: true
+                      url: http://glueops-monitoring-thanos-query.glueops-core-kube-prometheus-stack:9090/
+                      name: Prometheus
+                      uid: prometheus
+                    datasources:
+                      datasources.yaml:
+                        apiVersion: 1
+                        datasources:
+                          - name: Prometheus
+                            type: prometheus
+                            uid: prometheus
+                            url: http://glueops-monitoring-thanos-query.glueops-core-kube-prometheus-stack:9090/
+                            isDefault: true
+                          - name: Loki
+                            type: loki
+                            url: http://loki-gateway.glueops-core-loki.svc.cluster.local
+                            jsonData:
+                              httpHeaderName1: "X-Scope-OrgID"
+                            secureJsonData:
+                              httpHeaderValue1: "{{ .Values.captain_domain }}"
+                          - name: Tempo
+                            type: tempo
+                            uid: de7lydl3hl9fkd
+                            url: http://grafana-tempo-query-frontend.glueops-core-tempo:3100
+                            jsonData:
+                              httpHeaderName1: "X-Scope-OrgID"
+                              nodeGraph:
+                                enabled: true
+                              serviceMap:
+                                datasourceUid: prometheus
+                              tracesToMetrics:
+                                datasourceUid: prometheus
+                            secureJsonData:
+                              httpHeaderValue1: "{{ .Values.captain_domain }}"
+          - |-
+            apiVersion: argoproj.io/v1alpha1
+            kind: Application
+            metadata:
+              name: glueops-core-tempo
+              namespace: glueops-core
+            spec:
+              destination:
+                name: "in-cluster"
+                namespace: glueops-core-tempo
+              project: glueops-core
+              syncPolicy:
+                syncOptions:
+                  - Replace=true
+                automated:
+                  prune: true
+                  selfHeal: true
+                retry:
+                  backoff:
+                    duration: 10s
+                    factor: 2
+                    maxDuration: 3m0s
+                  limit: 5
+              source:
+                repoURL: https://grafana.github.io/helm-charts
+                chart: app
+                targetRevision: 8.13.0
+                helm:
+                  values: |
+                    image:
+                      tag: "2.7.2"
+                    compactor:
+                      config:
+                        compaction:
+                          block_retention: "{{ .Values.tempo.compaction_block_retention | default \"48h\" }}"
+                    multitenancyEnabled: true
+                    gateway:
+                      enabled: true
+                    metaMonitoring:
+                      serviceMonitor:
+                        enabled: true
+                    ingester:
+                      config:
+                        flush_check_period: 10s
+                        flush_all_on_shutdown: true
+                        complete_block_timeout: 1m
+                        max_block_bytes: 524288000
+                        trace_idle_period: 10s
+                    server:
+                      grpc_server_max_recv_msg_size: 81194305
+                      grpc_server_max_send_msg_size: 81194305
+                    storage: {}
+                    traces:
+                      otlp:
+                        http:
+                          enabled: true
+                        grpc:
+                          enabled: true
+                          max_recv_msg_size_mib: 8194305

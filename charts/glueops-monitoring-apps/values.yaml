@@ -1,0 +1,170 @@
+# Top-level values for glueops-monitoring umbrella chart
+
+replicaCount: 1
+
+global:
+  security:
+    allowInsecureImages: true
+
+kube-prometheus-stack:
+  fullnameOverride: "kps"
+  kubeStateMetrics:
+    enabled: true
+  prometheus:
+    enabled: true
+    prometheusSpec:
+      replicas: 2
+      retention: "15d"
+      enableRemoteWriteReceiver: true
+  kubelet:
+    enabled: true
+  grafana:
+    enabled: false
+    sidecar:
+      datasources:
+        enabled: true
+        isDefaultDatasource: true
+        url: http://kube-thanos-stack-query.glueops-core-kube-prometheus-stack:9090/
+        name: Prometheus
+        uid: prometheus
+
+thanos:
+  image:
+    registry: ghcr.io
+    repository: glueops/mirror/bitnami/thanos
+  query:
+    resources:
+      requests:
+        cpu: 2
+        memory: 1024Mi
+
+loki:
+  grafana:
+    enabled: false
+  loki:
+    auth_enabled: true
+
+opentelemetry-operator:
+  fullnameOverride: "otel-operator"
+  replicaCount: 1
+  manager:
+    resources: {}
+
+# Grafana releases (deployed as two instances: admin and dev)
+grafana-admin:
+  enabled: true
+  fullnameOverride: "grafana-admin"
+  sidecar:
+    datasources:
+      enabled: true
+      defaultDatasourceEnabled: false
+      isDefaultDatasource: true
+      url: http://glueops-monitoring-thanos-query.glueops-core-kube-prometheus-stack:9090/
+      name: Prometheus
+      uid: prometheus
+  adminPassword: "{{ .Values.grafana.admin_password | default \"changeme\" }}"
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_cluster_administrator_dashboard
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          uid: prometheus
+          url: http://glueops-monitoring-thanos-query.glueops-core-kube-prometheus-stack:9090/
+          isDefault: true
+        - name: Loki
+          type: loki
+          url: http://loki-gateway.glueops-core-loki.svc.cluster.local
+          jsonData:
+            httpHeaderName1: "X-Scope-OrgID"
+          secureJsonData:
+            httpHeaderValue1: "{{ .Values.captain_domain }}"
+        - name: Tempo
+          type: tempo
+          uid: de7lydl3hl9fkd
+          url: http://glueops-monitoring-thanos-query-frontend.glueops-core-tempo:3100
+          jsonData:
+            httpHeaderName1: "X-Scope-OrgID"
+          secureJsonData:
+            httpHeaderValue1: "{{ .Values.captain_domain }}"
+
+grafana-dev:
+  enabled: true
+  fullnameOverride: "grafana"
+  adminPassword: "{{ .Values.grafana.admin_password | default \"changeme\" }}"
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_developer_dashboard
+    defaultDatasourceEnabled: false
+    isDefaultDatasource: true
+    url: http://glueops-monitoring-thanos-query.glueops-core-kube-prometheus-stack:9090/
+    name: Prometheus
+    uid: prometheus
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          uid: prometheus
+          url: http://glueops-monitoring-thanos-query.glueops-core-kube-prometheus-stack:9090/
+          isDefault: true
+        - name: Loki
+          type: loki
+          url: http://loki-gateway.glueops-core-loki.svc.cluster.local
+          jsonData:
+            httpHeaderName1: "X-Scope-OrgID"
+          secureJsonData:
+            httpHeaderValue1: "{{ .Values.captain_domain }}"
+        - name: Tempo
+          type: tempo
+          uid: de7lydl3hl9fkd
+          url: http://grafana-tempo-query-frontend.glueops-core-tempo:3100
+          jsonData:
+            httpHeaderName1: "X-Scope-OrgID"
+            nodeGraph:
+              enabled: true
+            serviceMap:
+              datasourceUid: prometheus
+            tracesToMetrics:
+              datasourceUid: prometheus
+          secureJsonData:
+            httpHeaderValue1: "{{ .Values.captain_domain }}"
+
+tempo:
+  image:
+    tag: "2.7.2"
+  compactor:
+    config:
+      compaction:
+        block_retention: "{{ .Values.tempo.compaction_block_retention | default \"48h\" }}"
+  multitenancyEnabled: true
+  gateway:
+    enabled: true
+  metaMonitoring:
+    serviceMonitor:
+      enabled: true
+  ingester:
+    config:
+      flush_check_period: 10s
+      flush_all_on_shutdown: true
+      complete_block_timeout: 1m
+      max_block_bytes: 524288000
+      trace_idle_period: 10s
+  server:
+    grpc_server_max_recv_msg_size: 81194305
+    grpc_server_max_send_msg_size: 81194305
+  storage: {}
+  traces:
+    otlp:
+      http:
+        enabled: true
+      grpc:
+        enabled: true
+        max_recv_msg_size_mib: 8194305
+
