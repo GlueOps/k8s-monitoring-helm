@@ -36,7 +36,6 @@ spec:
           tag: v0.0.10@sha256:64dd3450a234497d36acc028c58615a21b4bd6850c9c0343bb0319c3db0ba04c
           pullPolicy: IfNotPresent
         deployment:
-          {{- toYaml .Values.glueops_node_and_tolerations | nindent 10 }}
           replicas: 2
           enabled: true
           imagePullPolicy: IfNotPresent
