@@ -1,0 +1,3 @@
+prometheus:
+  kube_controller_manager:
+    enabled: true
