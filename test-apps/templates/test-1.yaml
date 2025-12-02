@@ -31,9 +31,9 @@ spec:
         appName: 'go-healthz'
         image:
           port: 80
-          registry: {{ .Values.container_images.app_go_healthz.go_healthz.image.registry }}
-          repository: {{ .Values.container_images.app_go_healthz.go_healthz.image.repository }}
-          tag: {{ .Values.container_images.app_go_healthz.go_healthz.image.tag }}
+          registry: replicas.mirror.gpkg.io/proxy-ghcr-io
+          repository: glueops/go-healthz
+          tag: v0.0.10@sha256:64dd3450a234497d36acc028c58615a21b4bd6850c9c0343bb0319c3db0ba04c
           pullPolicy: IfNotPresent
         deployment:
           {{- toYaml .Values.glueops_node_and_tolerations | nindent 10 }}
