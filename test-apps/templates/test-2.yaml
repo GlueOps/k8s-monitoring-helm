@@ -30,7 +30,7 @@ spec:
       values: |
         appName: 'go-healthz'
         image:
-          port: 80
+          port: {{ .Values.port }}
           registry: replicas.mirror.gpkg.io/proxy-ghcr-io
           repository: glueops/go-healthz
           tag: v0.0.10@sha256:64dd3450a234497d36acc028c58615a21b4bd6850c9c0343bb0319c3db0ba04c
