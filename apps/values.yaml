@@ -1,3 +1,14 @@
 prometheus:
-  kube_controller_manager:
-    enabled: true
+  # -- Volume of storage requested for each Prometheus PVC, in Gi
+  volume_claim_storage_request: "50"
+  kube_controller_manager: false
+  kube_scheduler: false
+  kube_proxy: false
+  kube_api_server: true
+  kubelet: true
+  service_monitor: false
+  kube_state_metric: true
+  node_exporter: true
+  alertmanager_log_level: info
+  retentionSize: "10GB"
+  retention: 1d
