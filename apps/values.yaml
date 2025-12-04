@@ -149,3 +149,8 @@ container_images:
         registry: docker.io
         repository: grafana/grafana
         tag: 11.4.3@sha256:95eb8900c1e40e89b3e907094383b1c76c0c166ad5ec85e635de86f114aa7184
+
+dex:
+  grafana:
+    # -- Specify a unique password here. This will be used to connect grafana via OAuth to the Dex IDP. You can create one with in bash `openssl rand -base64 32`
+    client_secret: A5PHgGmQGWo8Es4XKb4lvU6buQT3qLUntjjyAXlthvD8f
