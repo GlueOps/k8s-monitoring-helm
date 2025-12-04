@@ -43,7 +43,7 @@ host_network:
           tls:
             internal_port: 45041
 
-captain_domain: nonprod.gliese667cc.onglueops
+captain_domain: test
 
 thanos:
   storage:
