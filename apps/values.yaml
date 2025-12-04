@@ -77,5 +77,52 @@ loki:
     parallelism: 2
     writebackParallelism: 1
     writebackBuffer: 1000
-    writebackSizeLimit: 500MB    
+    writebackSizeLimit: 500MB 
+
+otel:
+  replicas: 1
+  name_override: "glueops-otel"
+  config:
+  
+  manager:
+    image:
+      repository: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator
+      tag: ""
+    collectorImage:
+      repository: "otel/opentelemetry-collector-contrib"
+      tag: 0.123.0
+    opampBridgeImage:
+      repository: ""
+      tag: ""
+    targetAllocatorImage:
+      repository: ""
+      tag: ""
+    autoInstrumentationImage:
+      java:
+        repository: "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java"
+        tag: "2.7.0"
+      nodejs:
+        repository: "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs"
+        tag: "0.52.1"
+      python:
+        repository: "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python"
+        tag: "0.47b0"
+      dotnet:
+        repository: ""
+        tag: ""
+      apacheHttpd:
+        repository: ""
+        tag: ""
+      # The Go instrumentation support in the operator is disabled by default.
+      # To enable it, use the operator.autoinstrumentation.go feature gate.
+      go:
+        repository: ""
+        tag: ""
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi    
    
