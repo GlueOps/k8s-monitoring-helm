@@ -69,4 +69,13 @@ loki:
       accessKeyId: JYAXBKO07A3I9WK1TXHJ
       s3ForcePathStyle: false
       insecure: false
+  chunkConfig:
+    replicas: 2
+    maxItemMemory: 2
+    allocatedMemory: 2024
+    batchSize: 2
+    parallelism: 2
+    writebackParallelism: 1
+    writebackBuffer: 1000
+    writebackSizeLimit: 500MB    
    
