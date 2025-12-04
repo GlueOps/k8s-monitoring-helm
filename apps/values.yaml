@@ -125,4 +125,10 @@ otel:
       requests:
         cpu: 100m
         memory: 64Mi    
-   
+
+tempo:
+  storage:
+    placeholder_tempo_storage: {}
+  remote_url: ["http://localhost:9090/api/v1/write"]
+
+  compaction_block_retention: "168h"
