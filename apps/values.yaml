@@ -53,4 +53,20 @@ thanos:
         endpoint: fsn1.your-objectstorage.com
         access_key: JYAXBKO07A3I9WK1TXHJ
         secret_key: O1ZAocvfDLoYWlkVoD1Fnc2ipAjO73ZTWyCygmLv
+
+loki:
+  storage:
+   bucketNames:
+        chunks: nonprodgliese667cconglueopsrocks-eca3-loki
+        ruler: nonprodgliese667cconglueopsrocks-eca3-loki
+        admin: nonprodgliese667cconglueopsrocks-eca3-loki
+   type: s3
+   s3:
+      s3: nonprodgliese667cconglueopsrocks-eca3-loki
+      endpoint: https://fsn1.your-objectstorage.com
+      region: us-east-1
+      secretAccessKey: O1ZAocvfDLoYWlkVoD1Fnc2ipAjO73ZTWyCygmLv
+      accessKeyId: JYAXBKO07A3I9WK1TXHJ
+      s3ForcePathStyle: false
+      insecure: false
    
