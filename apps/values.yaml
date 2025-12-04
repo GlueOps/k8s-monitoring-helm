@@ -44,3 +44,8 @@ host_network:
             internal_port: 45041
 
 captain_domain: placeholder_cluster_environment.placeholder_tenant_key.placeholder_glueops_root_domain
+
+thanos:
+  # -- Format: glueops-tenant-placeholder_tenant_key-placeholder_cluster_environment-loki-primary, Credentials found at `loki_credentials` of json output of terraform-module-cloud-multy-prerequisites
+  storage:
+    #placeholder_thanos_storage: {}
