@@ -132,3 +132,12 @@ tempo:
   remote_url: ["http://localhost:9090/api/v1/write"]
 
   compaction_block_retention: "168h"
+
+grafana:
+  # @ignored
+  github_admin_org_name: glueops-rocks
+  # @ignored
+  github_admin_team_name: grafana_super_admins
+  github_other_org_names: development-tenant-gliese667cc
+  # -- Default admin password. CHANGE THIS!!!!
+  admin_password: svOAByq1KYa9YaHZAdoNFfBVIcJrkUvhZapNvVXdhQ5L7
