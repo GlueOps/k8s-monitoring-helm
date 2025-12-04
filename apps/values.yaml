@@ -23,7 +23,7 @@ glueops_node_and_tolerations:
       effect: "NoSchedule"
 
 host_network:
-  enabled: placeholder_enable_host_network
+  enabled: true
   external_secrets:
     webhook_port: 45010
   cert_manager:
@@ -43,9 +43,9 @@ host_network:
           tls:
             internal_port: 45041
 
-captain_domain: placeholder_cluster_environment.placeholder_tenant_key.placeholder_glueops_root_domain
+captain_domain: test.example.com
 
 thanos:
   # -- Format: glueops-tenant-placeholder_tenant_key-placeholder_cluster_environment-loki-primary, Credentials found at `loki_credentials` of json output of terraform-module-cloud-multy-prerequisites
   storage:
-    #placeholder_thanos_storage: {}
+   
