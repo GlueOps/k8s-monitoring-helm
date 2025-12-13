@@ -66,6 +66,7 @@ spec:
           multi_tenant_mode: true
           pattern_ingester:
             enabled: true
+            replicas: 1
           frontend:
             log_queries_longer_than: 5s
             compress_responses: true
