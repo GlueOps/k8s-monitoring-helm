@@ -148,7 +148,7 @@ container_images:
       image:
         registry: docker.io
         repository: grafana/grafana
-        tag: 11.4.3@sha256:95eb8900c1e40e89b3e907094383b1c76c0c166ad5ec85e635de86f114aa7184
+        tag: 12.3.1@sha256:2175aaa91c96733d86d31cf270d5310b278654b03f5718c59de12a865380a31f
 
 dex:
   grafana:
