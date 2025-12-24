@@ -152,7 +152,7 @@ container_images:
   app_loki_alert_group_controller:
     loki_alert_group_controller:
       image:
-        registry: replicas.mirror.gpkg.io/proxy-ghcr-io
+        registry: ghcr.io
         repository: glueops/metacontroller-operator-loki-rule-group
         tag: f1df66d506119cb7e8f7e3b224018c58a4d4a3fa    
 
