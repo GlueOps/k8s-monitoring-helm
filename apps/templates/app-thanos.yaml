@@ -38,7 +38,6 @@ spec:
         image:
           registry: ghcr.repo.gpkg.io
           repository: thanosio/thanos
-          tag: v0.40.1
         metrics:
           enabled: true
           serviceMonitor:
