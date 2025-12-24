@@ -47,6 +47,8 @@ spec:
           envVariables:
             - name: LOKI_API_ENDPOINT
               value: 'http://loki-gateway.glueops-core-loki.svc.cluster.local'
+            - name: ORGANIZATION_ID
+              value: '{{ .Values.captain_domain }}'  
           {{- toYaml .Values.glueops_node_and_tolerations | nindent 10 }}
           replicas: 2
           enabled: true

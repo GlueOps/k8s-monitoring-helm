@@ -154,7 +154,7 @@ container_images:
       image:
         registry: replicas.mirror.gpkg.io/proxy-ghcr-io
         repository: glueops/metacontroller-operator-loki-rule-group
-        tag: v0.4.6@sha256:61aa2e48fd5c2277551daca68f287e77530a357d280a8199a5db5724b255401c      
+        tag: sha256:20fc850e2aae91613db4e9e03be5bd21bfee49ca966166c4009d6f16fbe6e5ac      
 
 dex:
   grafana:
