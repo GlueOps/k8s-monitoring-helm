@@ -36,8 +36,8 @@ spec:
           security:
             allowInsecureImages: true
         image:
-          registry: ghcr.repo.gpkg.io
-          repository: thanosio/thanos
+          registry: ghcr.io
+          repository: glueops/mirror/bitnami/thanos
         metrics:
           enabled: true
           serviceMonitor:
