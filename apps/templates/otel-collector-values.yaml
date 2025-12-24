@@ -1,0 +1,157 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel-collector
+  namespace: glueops-core-otel
+spec:
+  mode: daemonset
+  volumes:
+   - name: varlog
+     hostPath:
+        path: /var/log
+  volumeMounts:
+    - mountPath: /var/log
+      name: varlog
+      readOnly: true
+  config: |
+      receivers:
+        filelog/multilang:
+            include: [ /var/log/pods/*/*/*.log ]
+            start_at: end
+            include_file_path: true
+            include_file_name: false
+            poll_interval: 200ms
+            operators:
+              
+              - type: regex_parser
+                regex: '/var/log/pods/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_[^/]+/(?P<container_name>[^/]+)/[^/]+\.log'
+                parse_from: attributes["log.file.path"]
+
+              - type: copy
+                from: attributes["namespace"]
+                to: attributes["k8s.namespace.name"]
+
+              - type: copy
+                from: attributes["pod_name"]
+                to: resource["k8s.pod.name"]
+
+              - type: copy
+                from: attributes["container_name"]
+                to: resource["k8s.container.name"]
+              - type: regex_parser
+                parse_from: attributes["pod_name"]
+                regex: '^(?P<service_prefix>.+?)(-[0-9a-f]{9,}(-[a-z0-9]{4,})?|-[0-9]+|-[a-z0-9]{4,6})?$'
+              - type: copy
+                from: attributes["service_prefix"]
+                to: resource["service.name"]
+        otlp:
+          protocols:
+            grpc:
+              endpoint: 0.0.0.0:4317
+            http:
+              endpoint: 0.0.0.0:4318
+      
+      processors:
+        
+        resource:
+          attributes:
+            - key: service.name
+              from_attribute: service.name
+              action: insert
+            - action: insert
+              key: loki.resource.labels
+              value: container, pod
+
+            # the following attributes are added manually here in the example, but would
+            # probably be added by other processors or straight from the source
+            - action: insert
+              key: container
+              from_attribute: k8s.container.name
+            - action: insert
+              key: pod
+              from_attribute: k8s.pod.name
+            
+             
+        batch:
+          send_batch_max_size: 50
+          timeout: 10s
+          send_batch_size: 50
+        memory_limiter:
+          # this calculation is based on the resource allocated to this collector, check resources/limits in the bottom
+          check_interval: 1s
+          # limit_mib is the hard limit
+          limit_percentage: 90
+          # The soft limit value will be equal to (limit_mib - spike_limit_mib).
+          spike_limit_percentage: 20
+        
+      
+      exporters:
+        otlphttp/loki:
+          headers:
+            X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
+          logs_endpoint: http://loki-write-headless.glueops-core-loki:3100/otlp/v1/logs
+        otlphttp/trace:
+          headers:
+            X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
+          traces_endpoint: http://grafana-tempo-distributor.glueops-core-tempo:4318/v1/traces
+        prometheusremotewrite:
+          endpoint: http://kps-prometheus.glueops-core-kube-prometheus-stack:9090/api/v1/write
+          target_info:
+            enabled: true
+      connectors:
+        spanmetrics:
+          aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
+          dimensions:
+            - default: GET
+              name: http.method
+            - name: http.status_code
+            - name: http.target
+            - name: net.peer.ip
+            - name: http.client_ip
+          dimensions_cache_size: 1000
+          exemplars:
+            enabled: true
+          metrics_expiration: 5m
+          metrics_flush_interval: 15s
+          namespace: span.metrics
+          resource_metrics_key_attributes:
+            - service.name
+            - telemetry.sdk.language
+            - telemetry.sdk.name
+      service:
+        telemetry:
+          metrics:
+            address: 0.0.0.0:8888
+        pipelines:
+          logs:
+            exporters:
+              - otlphttp/loki
+            receivers:
+              - otlp
+          metrics:
+            exporters:
+              - prometheusremotewrite
+            receivers:
+              - spanmetrics
+          traces:
+            exporters:
+              - otlphttp/trace
+              - spanmetrics
+            receivers:
+              - otlp
+
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: glueops-instrumentation
+  namespace: glueops-core
+spec:
+  exporter:
+    endpoint: http://otel-collector-collector.glueops-core-otel.svc.cluster.local:4317
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+  sampler:
+    type: parentbased_always_on
