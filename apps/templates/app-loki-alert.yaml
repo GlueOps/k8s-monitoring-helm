@@ -139,10 +139,9 @@ spec:
               hooks:
                 sync:
                   webhook:
-                    url: https://jaimie-subpulmonary-jarod.ngrok-free.dev/sync
-                    "ngrok-skip-browser-warning": true
+                    url: http://glueops-core-monitoring.glueops-core-loki-alert-group-controller.svc.cluster.local/sync
                 finalize:
                   webhook:
-                    url: https://jaimie-subpulmonary-jarod.ngrok-free.dev/finalize
-                    "ngrok-skip-browser-warning": true
+                    url: http://glueops-core-monitoring.glueops-core-loki-alert-group-controller.svc.cluster.local/finalize
+                    
         
