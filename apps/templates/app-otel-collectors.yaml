@@ -13,7 +13,8 @@ spec:
   project: glueops-core
   syncPolicy:
     syncOptions:
-      - CreateNamespace=true  
+      - CreateNamespace=true
+      - SkipDryRunOnMissingResource=true
     automated:
       prune: true
       selfHeal: true
