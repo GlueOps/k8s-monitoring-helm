@@ -26,6 +26,6 @@ spec:
   source:
     repoURL: https://github.com/GlueOps/k8s-monitoring-helm.git
     targetRevision: HEAD
-    path: apps/templates/values
+    path: apps/templates/otel
     directory:
       recurse: true
