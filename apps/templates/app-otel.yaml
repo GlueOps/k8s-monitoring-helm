@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: otel-operator-app
+  name: otel-operator
   annotations:
     argocd.argoproj.io/sync-wave: "-100"
   finalizers:
@@ -13,7 +13,7 @@ spec:
   project: glueops-core
   syncPolicy:
     syncOptions:
-      - CreateNamespace=true
+      - CreateNamespace=true  
     automated:
       prune: true
       selfHeal: true
