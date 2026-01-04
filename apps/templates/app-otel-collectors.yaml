@@ -2,19 +2,18 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: otel-collector
-  namespace: glueops-core-otel
   annotations:
-    argocd.argoproj.io/sync-wave: "30"
+    argocd.argoproj.io/sync-wave: "5"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
+    name: "in-cluster"
     namespace: glueops-core-otel
-    server: https://kubernetes.default.svc
   project: glueops-core
   syncPolicy:
     syncOptions:
-      - CreateNamespace=true
+      - CreateNamespace=true  
     automated:
       prune: true
       selfHeal: true
