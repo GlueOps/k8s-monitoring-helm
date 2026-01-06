@@ -86,8 +86,6 @@ spec:
         
       
       exporters:
-        debug:
-          verbosity: detailed
         otlphttp/loki:
           headers:
             X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
@@ -128,9 +126,9 @@ spec:
           logs:
             exporters:
               - otlphttp/loki
-              - debug
             receivers:
               - otlp
+              - filelog/multilang
           metrics:
             exporters:
               - prometheusremotewrite
