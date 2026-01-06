@@ -89,7 +89,7 @@ spec:
         otlphttp/loki:
           headers:
             X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
-          logs_endpoint: http://loki-write-headless.glueops-core-loki:3100/otlp/v1/logs
+          logs_endpoint: http://loki-gateway.glueops-core-loki:3100/otlp/v1/logs
         otlphttp/trace:
           headers:
             X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
