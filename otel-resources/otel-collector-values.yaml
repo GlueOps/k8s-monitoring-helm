@@ -56,10 +56,18 @@ spec:
           headers:
             X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
           logs_endpoint: http://loki-write-headless.glueops-core-loki:3100/otlp/v1/logs
+        otlp/trace:
+          headers:
+            X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
+          endpoint: grafana-tempo-distributor.glueops-core-tempo:4317
+          tls:
+            insecure: true
         otlphttp/trace:
           headers:
             X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
-          traces_endpoint: http://grafana-tempo-distributor.glueops-core-tempo:4317/v1/traces
+          endpoint: http://grafana-tempo-distributor.glueops-core-tempo:4318
+          tls:
+            insecure: true
         prometheusremotewrite:
           endpoint: http://kps-prometheus.glueops-core-kube-prometheus-stack:9090/api/v1/write
           target_info:
@@ -125,6 +133,7 @@ spec:
               - spanmetrics
           traces:
             exporters:
+              - otlp/trace
               - otlphttp/trace
               - spanmetrics
             receivers:
