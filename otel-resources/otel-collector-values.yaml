@@ -55,7 +55,7 @@ spec:
         otlphttp/trace:
           headers:
             X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
-          traces_endpoint: http://grafana-tempo-distributor.glueops-core-tempo:4318/v1/traces
+          traces_endpoint: http://grafana-tempo-distributor.glueops-core-tempo:4317/v1/traces
         prometheusremotewrite:
           endpoint: http://kps-prometheus.glueops-core-kube-prometheus-stack:9090/api/v1/write
           target_info:
