@@ -52,16 +52,16 @@ spec:
                   - https://*
               endpoint: 0.0.0.0:4318
       exporters:
-        otlphttp/loki:
-          headers:
-            X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
-          logs_endpoint: http://loki-write-headless.glueops-core-loki:3100/otlp/v1/logs
         otlp/trace:
           headers:
             X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
           endpoint: grafana-tempo-distributor.glueops-core-tempo:4317
           tls:
             insecure: true
+        otlphttp/loki:
+          headers:
+            X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
+          logs_endpoint: http://loki-write-headless.glueops-core-loki:3100/otlp/v1/logs
         otlphttp/trace:
           headers:
             X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
