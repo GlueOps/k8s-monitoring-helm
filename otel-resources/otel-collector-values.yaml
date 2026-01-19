@@ -46,6 +46,10 @@ spec:
             grpc:
               endpoint: 0.0.0.0:4317
             http:
+              cors:
+                allowed_origins:
+                - http://*
+                - https://*
               endpoint: 0.0.0.0:4318
       exporters:
         otlphttp/loki:
