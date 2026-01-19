@@ -48,8 +48,8 @@ spec:
             http:
               cors:
                 allowed_origins:
-                - http://*
-                - https://*
+                  - http://*
+                  - https://*
               endpoint: 0.0.0.0:4318
       exporters:
         otlphttp/loki:
