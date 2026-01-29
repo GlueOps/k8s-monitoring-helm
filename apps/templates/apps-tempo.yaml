@@ -34,19 +34,19 @@ spec:
           image:
             tag: 2.7.2
         metricsGenerator:
-        enabled: true
-        config:
-          processor:
-            service_graphs:
-              enabled: true
-            span_metrics:
-              enabled: true
-          registry:
-            collection_interval: 30s
-          storage:
-            # Remote-write to Prometheus/OSD/etc. Update the URL.
-            remote_write:
-              - url: http://kps-prometheus.glueops-core-kube-prometheus-stack:9090/api/v1/write
+         enabled: true
+         config:
+            processor:
+              service_graphs:
+                enabled: true
+              span_metrics:
+                enabled: false
+            registry:
+              collection_interval: 30s
+            storage:
+              # Remote-write to Prometheus/OSD/etc. Update the URL.
+              remote_write:
+                - url: http://kps-prometheus.glueops-core-kube-prometheus-stack:9090/api/v1/write
                 
         compactor:
           config:
