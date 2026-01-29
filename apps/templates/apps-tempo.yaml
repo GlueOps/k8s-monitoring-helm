@@ -45,6 +45,8 @@ spec:
                 max_items: 10000
                 wait: 10s
                 workers: 10
+              span_metrics:
+                max_live_traces: 0    
             registry:
               collection_interval: 30s
             storage:
@@ -57,11 +59,7 @@ spec:
             compaction:
              block_retention: {{ .Values.tempo.compaction_block_retention}}
         multitenancyEnabled: true
-        per_tenant_overrides:
-          nonprod.gliese667cc.onglueops.rocks:
-            ingester:
-              max_bytes_per_trace: 40000000
-              max_live_traces: 0
+        
         gateway:
           enabled: true
         metaMonitoring:
@@ -74,7 +72,7 @@ spec:
             complete_block_timeout: 1m
             max_block_bytes: 524288000
             max_bytes_per_trace: 40000000
-            max_live_traces: 0  
+            
             trace_idle_period: 10s
         server:
             grpc_server_max_recv_msg_size: 81194305
