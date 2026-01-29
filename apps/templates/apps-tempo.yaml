@@ -30,9 +30,6 @@ spec:
     helm:
       skipCrds: true
       values: |-
-        tempo:
-          image:
-            tag: 2.7.2
         metricsGenerator:
          enabled: true
          config:
