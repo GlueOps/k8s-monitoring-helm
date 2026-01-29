@@ -59,7 +59,11 @@ spec:
             compaction:
              block_retention: {{ .Values.tempo.compaction_block_retention}}
         multitenancyEnabled: true
-        
+        overrides:
+          defaults:
+            ingestion:
+              max_bytes_per_trace: 20000000
+              max_traces_per_user: 1000000
         gateway:
           enabled: true
         metaMonitoring:
