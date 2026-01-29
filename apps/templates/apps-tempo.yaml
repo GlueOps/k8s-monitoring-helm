@@ -58,7 +58,9 @@ spec:
              block_retention: {{ .Values.tempo.compaction_block_retention}}
         multitenancyEnabled: true
         overrides:
-           metrics_generator:
+          config_type: new
+          defaults:
+            metrics_generator:
               processors: [service-graphs, span-metrics]
             global:
               max_bytes_per_trace: 22428800
