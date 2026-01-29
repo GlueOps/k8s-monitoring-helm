@@ -26,13 +26,11 @@ spec:
   source:
     repoURL: 'https://grafana.github.io/helm-charts'
     chart: tempo-distributed
-    targetRevision: 1.37.0
+    targetRevision: 1.40.0
     helm:
       skipCrds: true
       values: |-
-        tempo:
-          image:
-            tag: 2.7.2
+        
         metricsGenerator:
          enabled: true
          config:
