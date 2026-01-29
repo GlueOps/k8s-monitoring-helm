@@ -30,6 +30,9 @@ spec:
     helm:
       skipCrds: true
       values: |-
+        tempo:
+          image:
+            tag: 2.7.2
         metricsGenerator:
          enabled: true
          config:
@@ -54,14 +57,6 @@ spec:
             compaction:
              block_retention: {{ .Values.tempo.compaction_block_retention}}
         multitenancyEnabled: true
-        overrides:
-          #config_type: new
-          defaults:
-            metrics_generator:
-              processors: [service-graphs, span-metrics]
-            global:
-              max_bytes_per_trace: 22428800
-              max_live_traces: 0
         gateway:
           enabled: true
         metaMonitoring:
