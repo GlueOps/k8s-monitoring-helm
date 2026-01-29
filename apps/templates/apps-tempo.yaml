@@ -57,12 +57,11 @@ spec:
             compaction:
              block_retention: {{ .Values.tempo.compaction_block_retention}}
         multitenancyEnabled: true
-        overrides:
-         per_tenant_overrides:
-            nonprod.gliese667cc.onglueops.rocks:
-              ingester:
-                max_bytes_per_trace: 40000000
-                max_live_traces: 0
+        per_tenant_overrides:
+          nonprod.gliese667cc.onglueops.rocks:
+            ingester:
+              max_bytes_per_trace: 40000000
+              max_live_traces: 0
         gateway:
           enabled: true
         metaMonitoring:
@@ -74,6 +73,8 @@ spec:
             flush_all_on_shutdown: true
             complete_block_timeout: 1m
             max_block_bytes: 524288000
+            max_bytes_per_trace: 40000000
+            max_live_traces: 0  
             trace_idle_period: 10s
         server:
             grpc_server_max_recv_msg_size: 81194305
