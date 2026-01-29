@@ -36,7 +36,17 @@ spec:
         metricsGenerator:
          enabled: true
          config:
-            
+            processor:
+              service_graphs:
+                # -- Additional dimensions to add to the metrics along with the default dimensions.
+                # -- The resource and span attributes to be added to the service graph metrics, if present.
+                dimensions: []
+                histogram_buckets: [0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8]
+                max_items: 10000
+                wait: 10s
+                workers: 10
+            registry:
+              collection_interval: 30s
             storage:
               # Remote-write to Prometheus/OSD/etc. Update the URL.
               remote_write:
