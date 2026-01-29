@@ -45,8 +45,7 @@ spec:
                 max_items: 10000
                 wait: 10s
                 workers: 10
-              span_metrics:
-                max_live_traces: 0    
+              
             registry:
               collection_interval: 30s
             storage:
