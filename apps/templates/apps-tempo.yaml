@@ -26,11 +26,10 @@ spec:
   source:
     repoURL: 'https://grafana.github.io/helm-charts'
     chart: tempo-distributed
-    targetRevision: 1.40.0
+    targetRevision: 1.37.0
     helm:
       skipCrds: true
       values: |-
-        
         metricsGenerator:
          enabled: true
          config:
@@ -57,11 +56,8 @@ spec:
              block_retention: {{ .Values.tempo.compaction_block_retention}}
         multitenancyEnabled: true
         overrides:
-          config_type: new
-          defaults:
-            ingestion:
-              max_bytes_per_trace: 20000000
-              max_traces_per_user: 1000000
+            max_bytes_per_trace: 20000000
+            max_traces_per_user: 1000000
         gateway:
           enabled: true
         metaMonitoring:
