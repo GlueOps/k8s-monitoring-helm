@@ -30,6 +30,19 @@ spec:
     helm:
       skipCrds: true
       values: |-
+        overrides:
+          defaults:
+            ingestion:
+              burst_size_bytes: 50000000
+              rate_limit_bytes: 50000000
+              max_traces_per_user: 100000
+            metrics_generator:
+              processors:
+                - service-graphs
+                - span-metrics
+                - local-blocks
+            global:
+              max_bytes_per_trace: 10000000
         metricsGenerator:
          enabled: true
          config:
@@ -55,9 +68,7 @@ spec:
             compaction:
              block_retention: {{ .Values.tempo.compaction_block_retention}}
         multitenancyEnabled: true
-        overrides:
-            max_bytes_per_trace: 20000000
-            max_traces_per_user: 1000000
+        
         gateway:
           enabled: true
         metaMonitoring:
