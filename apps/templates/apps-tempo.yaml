@@ -33,10 +33,7 @@ spec:
         tempo:
           image:
             tag: 2.7.2
-        overrides:
-          defaults:
-            max_bytes_per_trace: 40000000
-            live_traces_exceeded: 0
+        
         metricsGenerator:
          enabled: true
          config:
