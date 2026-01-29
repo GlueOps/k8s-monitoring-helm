@@ -36,13 +36,7 @@ spec:
         metricsGenerator:
          enabled: true
          config:
-            processor:
-              service_graphs:
-                enabled: true
-              span_metrics:
-                enabled: false
-            registry:
-              collection_interval: 30s
+            
             storage:
               # Remote-write to Prometheus/OSD/etc. Update the URL.
               remote_write:
