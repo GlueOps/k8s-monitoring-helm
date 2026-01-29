@@ -59,6 +59,7 @@ spec:
              block_retention: {{ .Values.tempo.compaction_block_retention}}
         multitenancyEnabled: true
         overrides:
+          config_type: new
           defaults:
             ingestion:
               max_bytes_per_trace: 20000000
