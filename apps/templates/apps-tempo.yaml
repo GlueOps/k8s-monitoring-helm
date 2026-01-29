@@ -59,8 +59,11 @@ spec:
         multitenancyEnabled: true
         overrides:
           defaults:
-            max_bytes_per_trace: 40000000
-            live_traces_exceeded: 0
+            metrics_generator:
+              processors: [service-graphs, span-metrics]
+            global:
+              max_bytes_per_trace: 22428800
+              max_live_traces: 0
         gateway:
           enabled: true
         metaMonitoring:
