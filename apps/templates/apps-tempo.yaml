@@ -26,7 +26,7 @@ spec:
   source:
     repoURL: 'https://grafana.github.io/helm-charts'
     chart: tempo-distributed
-    targetRevision: 1.37.0
+    targetRevision: 1.59.0
     helm:
       skipCrds: true
       values: |-
