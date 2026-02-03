@@ -22,6 +22,6 @@ dependencies:
     version: "8.13.0"
     repository: "https://grafana.github.io/helm-charts"
   - name: tempo-distributed
-    version: "1.37.0"
+    version: "1.54.1"
     repository: "https://grafana.github.io/helm-charts"
  
