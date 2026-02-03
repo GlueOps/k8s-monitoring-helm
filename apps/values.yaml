@@ -149,6 +149,12 @@ container_images:
         registry: docker.io
         repository: grafana/grafana
         tag: 11.4.3@sha256:95eb8900c1e40e89b3e907094383b1c76c0c166ad5ec85e635de86f114aa7184
+  app_loki_alert_group_controller:
+    loki_alert_group_controller:
+      image:
+        registry: ghcr.io
+        repository: glueops/metacontroller-operator-loki-rule-group
+        tag: 50357243c2743adda4a4477888a1ea89cd9c0a9c    
 
 dex:
   grafana:

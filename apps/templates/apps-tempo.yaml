@@ -3,7 +3,7 @@ kind: Application
 metadata:
   name: grafana-tempo
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "4"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -30,14 +30,45 @@ spec:
     helm:
       skipCrds: true
       values: |-
-        tempo:
-          image:
-            tag: 2.7.2
+        overrides:
+          defaults:
+            ingestion:
+              burst_size_bytes: 50000000
+              rate_limit_bytes: 50000000
+              max_traces_per_user: 10000000
+            metrics_generator:
+              processors:
+                - service-graphs
+                - span-metrics
+                - local-blocks
+            global:
+              max_bytes_per_trace: 10000000
+        metricsGenerator:
+         enabled: true
+         config:
+            processor:
+              service_graphs:
+                # -- Additional dimensions to add to the metrics along with the default dimensions.
+                # -- The resource and span attributes to be added to the service graph metrics, if present.
+                dimensions: []
+                histogram_buckets: [0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8]
+                max_items: 10000
+                wait: 10s
+                workers: 10
+              
+            registry:
+              collection_interval: 30s
+            storage:
+              # Remote-write to Prometheus/OSD/etc. Update the URL.
+              remote_write:
+                - url: http://kps-prometheus.glueops-core-kube-prometheus-stack:9090/api/v1/write
+                
         compactor:
           config:
             compaction:
              block_retention: {{ .Values.tempo.compaction_block_retention}}
         multitenancyEnabled: true
+        
         gateway:
           enabled: true
         metaMonitoring:
@@ -49,6 +80,8 @@ spec:
             flush_all_on_shutdown: true
             complete_block_timeout: 1m
             max_block_bytes: 524288000
+            max_bytes_per_trace: 40000000
+            
             trace_idle_period: 10s
         server:
             grpc_server_max_recv_msg_size: 81194305
