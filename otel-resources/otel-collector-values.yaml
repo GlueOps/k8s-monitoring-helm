@@ -57,10 +57,8 @@ spec:
               - job_name: otel-collector
                 scrape_interval: 5s
                 static_configs:
-                  - targets: 
+                  - targets:
                       - 0.0.0.0:8888
-              
-          
       exporters:
         otlp/trace:
           endpoint: grafana-tempo-distributor.glueops-core-tempo:4317
