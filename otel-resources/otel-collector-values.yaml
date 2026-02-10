@@ -51,6 +51,10 @@ spec:
                   - http://*
                   - https://*
               endpoint: 0.0.0.0:4318
+        prometheus:
+          host: '0.0.0.0'
+          port: 8888
+          
       exporters:
         otlp/trace:
           endpoint: grafana-tempo-distributor.glueops-core-tempo:4317
@@ -118,7 +122,12 @@ spec:
       service:
         telemetry:
           metrics:
-            address: 0.0.0.0:8888
+            readers:
+              - pull:
+                  exporter:
+                    prometheus:
+                      host: '0.0.0.0'
+                      port: 8888
         pipelines:
           logs:
             exporters:
@@ -130,6 +139,7 @@ spec:
             exporters:
               - prometheusremotewrite
             receivers:
+              - prometheus
               - spanmetrics
           traces:
             exporters:
@@ -137,6 +147,7 @@ spec:
               - otlphttp/trace
               - spanmetrics
             receivers:
+              
               - otlp
 
 ---
