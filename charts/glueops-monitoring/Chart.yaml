@@ -19,7 +19,7 @@ dependencies:
     repository: "https://open-telemetry.github.io/opentelemetry-helm-charts"
   - name: grafana
     alias: grafana-dev
-    version: "8.13.0"
+    version: "9.4.5"
     repository: "https://grafana.github.io/helm-charts"
   - name: tempo-distributed
     version: "1.37.0"
