@@ -76,24 +76,20 @@ dashboards:
       - sample
       - example
     panels:
-      - title: "Container CPU Usage"
-        description: "CPU usage rate by container"
-        query: 'sum(rate(container_cpu_usage_seconds_total{namespace="default"}[5m])) by (pod)'
+      - title: "Container Restarts"
+        description: "Container Restarts"
+        query: 'sum(increase(kube_pod_container_status_restarts_total{namespace="nonprod", container!=""}[10m])* on(pod) group_left(label_app_kubernetes_io_name)  max by (pod, label_app_kubernetes_io_name) ( kube_pod_labels{namespace="nonprod", label_app_kubernetes_io_name!=""})) by (label_app_kubernetes_io_name) > 0'
         legendFormat: "{{pod}}"
 
-      - title: "Container Memory Usage"
-        description: "Working set memory by container"
-        query: 'sum(container_memory_working_set_bytes{namespace="default"}) by (pod)'
+      - title: "Container CPU Usage"
+        description: "Container CPU Usage"
+        query: 'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace="nonprod",container!=''} * on(pod) group_left(label_app_kubernetes_io_name) max by (pod, label_app_kubernetes_io_name) (kube_pod_labels{namespace="nonprod", label_app_kubernetes_io_name!=''})) by (label_app_kubernetes_io_name)'
         unit: bytes
         legendFormat: "{{pod}}"
 
       - title: "Pod Restart Count"
         description: "Total pod restarts"
-        query: 'sum(kube_pod_container_status_restarts_total{namespace="default"}) by (pod)'
+        query: 'sum(kube_pod_container_status_ready{namespace="nonprod"})'
         type: stat
 
-      - title: "Network Receive Bytes"
-        description: "Network bytes received per second"
-        query: 'sum(rate(container_network_receive_bytes_total{namespace="default"}[5m])) by (pod)'
-        unit: Bps
-        legendFormat: "{{pod}}"
+     
