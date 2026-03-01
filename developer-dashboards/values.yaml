@@ -1,0 +1,99 @@
+# ============================================================================
+# Self-Service Grafana Dashboards
+# ============================================================================
+#
+# Developers: Add your dashboards below. Each dashboard becomes a separate
+# Grafana dashboard auto-loaded via the sidecar.
+#
+# You only need to provide:
+#   - title:       Panel title displayed in Grafana
+#   - description: What this panel shows
+#   - query:       PromQL query
+#
+# Optional fields:
+#   - type:  timeseries (default) | stat | gauge | table | bar | heatmap
+#   - unit:  short (default) | percent | seconds | bytes | reqps | ops
+#            See: https://grafana.com/docs/grafana/latest/panels-visualizations/configure-standard-options/#unit
+#   - legendFormat: Legend label format (e.g., "{{pod}}", "{{instance}}")
+#
+# ============================================================================
+
+# -- Grafana sidecar label used to auto-discover dashboards.
+# Must match the sidecar label configured in your Grafana deployment.
+sidecarLabel: grafana_developer_dashboard
+
+# -- Prometheus datasource UID configured in Grafana
+datasourceUid: prometheus
+
+# -- Default layout settings
+layout:
+  # -- Number of columns (1, 2, 3, or 4). Each panel gets equal width.
+  columns: 2
+  # -- Default panel height in grid units
+  panelHeight: 8
+
+# -- List of dashboards to generate
+dashboards:
+  # -------------------------------------------------------
+  # EXAMPLE: Uncomment and modify for your application
+  # -------------------------------------------------------
+  #
+  # - name: "my-app"
+  #   title: "My Application Dashboard"
+  #   description: "Monitoring dashboard for my-app microservice"
+  #   tags:
+  #     - my-app
+  #     - team-backend
+  #   panels:
+  #     - title: "Request Rate"
+  #       description: "HTTP requests per second by status code"
+  #       query: 'sum(rate(http_requests_total{app="my-app"}[5m])) by (status_code)'
+  #       legendFormat: "{{status_code}}"
+  #
+  #     - title: "Error Rate (%)"
+  #       description: "Percentage of 5xx errors"
+  #       query: 'sum(rate(http_requests_total{app="my-app",status_code=~"5.."}[5m])) / sum(rate(http_requests_total{app="my-app"}[5m])) * 100'
+  #       type: stat
+  #       unit: percent
+  #
+  #     - title: "P99 Latency"
+  #       description: "99th percentile request duration"
+  #       query: 'histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{app="my-app"}[5m])) by (le))'
+  #       unit: s
+  #
+  #     - title: "Memory Usage"
+  #       description: "Container memory usage"
+  #       query: 'container_memory_working_set_bytes{container="my-app"}'
+  #       unit: bytes
+  #
+  # -------------------------------------------------------
+  # Sample dashboard (safe to remove or replace)
+  # -------------------------------------------------------
+  - name: "sample-app"
+    title: "Sample App Dashboard"
+    description: "Example self-service dashboard - replace with your own"
+    tags:
+      - sample
+      - example
+    panels:
+      - title: "Container CPU Usage"
+        description: "CPU usage rate by container"
+        query: 'sum(rate(container_cpu_usage_seconds_total{namespace="default"}[5m])) by (pod)'
+        legendFormat: "{{pod}}"
+
+      - title: "Container Memory Usage"
+        description: "Working set memory by container"
+        query: 'sum(container_memory_working_set_bytes{namespace="default"}) by (pod)'
+        unit: bytes
+        legendFormat: "{{pod}}"
+
+      - title: "Pod Restart Count"
+        description: "Total pod restarts"
+        query: 'sum(kube_pod_container_status_restarts_total{namespace="default"}) by (pod)'
+        type: stat
+
+      - title: "Network Receive Bytes"
+        description: "Network bytes received per second"
+        query: 'sum(rate(container_network_receive_bytes_total{namespace="default"}[5m])) by (pod)'
+        unit: Bps
+        legendFormat: "{{pod}}"

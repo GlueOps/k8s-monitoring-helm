@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Developer Self-Service Dashboards",
+  "description": "Schema for self-service Grafana dashboard provisioning. Developers provide panel title, description, and PromQL query.",
+  "type": "object",
+  "properties": {
+    "sidecarLabel": {
+      "type": "string",
+      "description": "Grafana sidecar label key for auto-discovery",
+      "default": "grafana_developer_dashboard"
+    },
+    "datasourceUid": {
+      "type": "string",
+      "description": "Prometheus datasource UID configured in Grafana",
+      "default": "prometheus"
+    },
+    "layout": {
+      "type": "object",
+      "description": "Global layout settings for panel arrangement",
+      "properties": {
+        "columns": {
+          "type": "integer",
+          "description": "Number of columns in the grid (1-4)",
+          "minimum": 1,
+          "maximum": 4,
+          "default": 2
+        },
+        "panelHeight": {
+          "type": "integer",
+          "description": "Default panel height in Grafana grid units",
+          "minimum": 4,
+          "maximum": 20,
+          "default": 8
+        }
+      }
+    },
+    "dashboards": {
+      "type": "array",
+      "description": "List of dashboards to generate",
+      "items": {
+        "type": "object",
+        "required": ["name", "title", "panels"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Unique identifier for the dashboard (used in ConfigMap name and Grafana UID). Use lowercase with dashes.",
+            "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+            "examples": ["my-app", "payment-service", "api-gateway"]
+          },
+          "title": {
+            "type": "string",
+            "description": "Dashboard title displayed in Grafana",
+            "examples": ["My Application Dashboard", "Payment Service Metrics"]
+          },
+          "description": {
+            "type": "string",
+            "description": "Dashboard description shown in Grafana"
+          },
+          "tags": {
+            "type": "array",
+            "description": "Tags for filtering dashboards in Grafana",
+            "items": {
+              "type": "string"
+            },
+            "examples": [["my-app", "team-backend"]]
+          },
+          "panels": {
+            "type": "array",
+            "description": "List of panels to display on the dashboard",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["title", "query"],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Panel title displayed above the visualization",
+                  "examples": ["Request Rate", "Error Rate", "P99 Latency"]
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Tooltip description explaining what this panel shows"
+                },
+                "query": {
+                  "type": "string",
+                  "description": "PromQL query to execute. This is the Prometheus query that fetches the data.",
+                  "examples": [
+                    "rate(http_requests_total{app=\"my-app\"}[5m])",
+                    "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
+                    "sum(kube_pod_container_status_restarts_total{namespace=\"default\"}) by (pod)"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Visualization type",
+                  "enum": ["timeseries", "stat", "gauge", "table", "bar", "heatmap"],
+                  "default": "timeseries"
+                },
+                "unit": {
+                  "type": "string",
+                  "description": "Display unit for values. Common: short, percent, bytes, s (seconds), ms, Bps (bytes/sec), reqps (requests/sec), ops (operations/sec)",
+                  "examples": ["short", "percent", "bytes", "s", "ms", "Bps", "reqps"],
+                  "default": "short"
+                },
+                "legendFormat": {
+                  "type": "string",
+                  "description": "Legend label template using {{label_name}} syntax",
+                  "examples": ["{{pod}}", "{{instance}}", "{{status_code}}"]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

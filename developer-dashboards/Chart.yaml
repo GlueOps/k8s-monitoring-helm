@@ -1,0 +1,10 @@
+apiVersion: v2
+name: developer-dashboards
+description: >-
+  Self-service Grafana dashboard provisioning chart.
+  Developers provide panel title, description, and PromQL query.
+  The chart auto-generates complete Grafana dashboard JSON with auto-arranged panels
+  and deploys them as ConfigMaps picked up by the Grafana sidecar.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

@@ -1,0 +1,25 @@
+{{/*
+================================================================================
+configmaps.yaml - Generates one ConfigMap per developer dashboard.
+Each ConfigMap is labeled so the Grafana sidecar auto-discovers it.
+================================================================================
+*/}}
+{{- $dsUid := .Values.datasourceUid }}
+{{- $layout := .Values.layout }}
+{{- $sidecarLabel := .Values.sidecarLabel }}
+
+{{- range $dashboard := .Values.dashboards }}
+{{- if $dashboard.panels }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dev-dashboard-{{ include "developer-dashboards.sanitizeName" $dashboard.name }}
+  labels:
+    {{- include "developer-dashboards.labels" $ | nindent 4 }}
+    {{ $sidecarLabel }}: "1"
+data:
+  {{ $dashboard.name }}.json: |-
+    {{- include "developer-dashboards.dashboardJson" (dict "dashboard" $dashboard "datasourceUid" $dsUid "layout" $layout) | nindent 4 }}
+{{- end }}
+{{- end }}
