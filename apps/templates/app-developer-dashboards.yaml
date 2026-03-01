@@ -24,7 +24,7 @@ spec:
         maxDuration: 3m0s
       limit: 5
   source:
-    repoURL: {{ .Values.github_owner | default "https://github.com/GlueOps" }}/{{ .Values.repo_name | default "k8s-monitoring-helm" }}
+    repoURL: https://github.com/GlueOps/k8s-monitoring-helm.git
     path: developer-dashboards
     targetRevision: {{ .Values.developer_dashboards_target_revision | default "main" }}
     helm:

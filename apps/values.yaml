@@ -160,3 +160,7 @@ dex:
   grafana:
     # -- Specify a unique password here. This will be used to connect grafana via OAuth to the Dex IDP. You can create one with in bash `openssl rand -base64 32`
     client_secret: A5PHgGmQGWo8Es4XKb4lvU6buQT3qLUntjjyAXlthvD8f
+
+# -- Target revision (branch/tag) for the developer-dashboards chart.
+# Change to "main" once the feat/self-service-dashboards branch is merged.
+developer_dashboards_target_revision: feat/self-service-dashboards
