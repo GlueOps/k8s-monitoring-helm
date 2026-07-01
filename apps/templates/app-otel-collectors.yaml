@@ -26,7 +26,7 @@ spec:
       limit: 5
   source:
     repoURL: https://github.com/GlueOps/k8s-monitoring-helm.git
-    targetRevision: feat/merging-to-main-for-release
+    targetRevision: main
     path: otel-resources
     directory:
       recurse: true

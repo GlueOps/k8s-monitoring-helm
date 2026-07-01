@@ -22,7 +22,7 @@ spec:
           include_file_path: true
           operators:
             - parse_from: attributes["log.file.path"]
-              regex: /var/log/pods/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_[^/]+/(?P<container_name>[^/]+)/[^/]+\.log
+              regex: "/var/log/pods/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_[^/]+/(?P<container_name>[^/]+)/[^/]+\.log"
               type: regex_parser
             - from: attributes["namespace"]
               to: attributes["k8s.namespace.name"]
