@@ -22,7 +22,7 @@ spec:
         include_file_path: true
         operators:
           - parse_from: attributes["log.file.path"]
-            regex: "/var/log/pods/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_[^/]+/(?P<container_name>[^/]+)/[^/]+\.log"
+            regex: '/var/log/pods/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_[^/]+/(?P<container_name>[^/]+)/[^/]+\.log'
             type: regex_parser
           - from: attributes["namespace"]
             to: attributes["k8s.namespace.name"]
@@ -34,7 +34,7 @@ spec:
             to: resource["k8s.container.name"]
             type: copy
           - parse_from: attributes["pod_name"]
-            regex: ^(?P<service_prefix>.+?)(-[0-9a-f]{9,}(-[a-z0-9]{4,})?|-[0-9]+|-[a-z0-9]{4,6})?$
+            regex: '^(?P<service_prefix>.+?)(-[0-9a-f]{9,}(-[a-z0-9]{4,})?|-[0-9]+|-[a-z0-9]{4,6})?$'
             type: regex_parser
           - from: attributes["service_prefix"]
             to: resource["service.name"]
