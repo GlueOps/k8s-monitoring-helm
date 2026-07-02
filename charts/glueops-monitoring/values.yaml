@@ -86,7 +86,7 @@ grafana-admin:
         - name: Tempo
           type: tempo
           uid: de7lydl3hl9fkd
-          url: http://glueops-monitoring-thanos-query-frontend.glueops-core-tempo:3100
+          url: http://glueops-monitoring-thanos-query-frontend.glueops-core-tempo:3200
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
           secureJsonData:
@@ -124,7 +124,7 @@ grafana-dev:
         - name: Tempo
           type: tempo
           uid: de7lydl3hl9fkd
-          url: http://grafana-tempo-query-frontend.glueops-core-tempo:3100
+          url: http://grafana-tempo-query-frontend.glueops-core-tempo:3200
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
             nodeGraph:
