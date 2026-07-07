@@ -63,17 +63,17 @@ spec:
       otlp/trace:
         endpoint: grafana-tempo-distributor.glueops-core-tempo:4317
         headers:
-          X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
+          X-Scope-OrgID: "{{ .Values.captain_domain }}"
         tls:
           insecure: true
       otlphttp/loki:
         headers:
-          X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
+          X-Scope-OrgID: "{{ .Values.captain_domain }}"
         logs_endpoint: http://loki-write-headless.glueops-core-loki:3100/otlp/v1/logs
       otlphttp/trace:
         endpoint: http://grafana-tempo-distributor.glueops-core-tempo:4318
         headers:
-          X-Scope-OrgID: nonprod.gliese667cc.onglueops.rocks
+          X-Scope-OrgID: "{{ .Values.captain_domain }}"
         tls:
           insecure: true
       prometheusremotewrite:
