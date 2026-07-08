@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kube-prometheus-stack
+  name: glueops-core-kps
   annotations:
     argocd.argoproj.io/sync-wave: "2"
   finalizers:
@@ -9,7 +9,7 @@ metadata:
 spec:
   destination:
     name: "in-cluster"
-    namespace: glueops-core-kube-prometheus-stack
+    namespace: glueops-core-monitoring
   project: glueops-core
   syncPolicy:
     syncOptions:
@@ -39,7 +39,7 @@ spec:
         coreDns:
           enabled: false
         # https://github.com/prometheus-community/helm-charts/issues/1033
-        fullnameOverride: "kps"
+        fullnameOverride: "glueops-core-kps"
         kubeControllerManager:
           enabled: {{ .Values.prometheus.kube_controller_manager }}
         kubeScheduler:
@@ -86,6 +86,17 @@ spec:
             patch:
               {{- toYaml .Values.glueops_node_and_tolerations | nindent 14 }}
           {{- toYaml .Values.glueops_node_and_tolerations | nindent 10 }}
+        {{- if .Values.kubeadm.enabled }}
+        kubeEtcd:
+          serviceMonitor:
+            caFile:   /etc/prometheus/secrets/etcd-client-certs/ca.crt
+            certFile: /etc/prometheus/secrets/etcd-client-certs/apiserver-etcd-client.crt
+            keyFile:  /etc/prometheus/secrets/etcd-client-certs/apiserver-etcd-client.key
+            scheme: https
+          service:
+            port: 2379
+            targetPort: 2379
+        {{- end }}
         prometheus: 
           enabled: true
           thanosService:
@@ -112,6 +123,9 @@ spec:
             podMonitorSelector: {}
             podMonitorNamespaceSelector: {}
             podMonitorSelectorNilUsesHelmValues: false
+            probeSelector: {}
+            probeNamespaceSelector: {}
+            probeSelectorNilUsesHelmValues: false
             enableRemoteWriteReceiver: true
             disableCompaction: false
             retention: {{ .Values.prometheus.retention }}
@@ -134,4 +148,8 @@ spec:
                     requests:
                       storage: {{ .Values.prometheus.volume_claim_storage_request}}Gi
             hostNetwork: {{ .Values.host_network.enabled }}
+            {{- if .Values.kubeadm.enabled }}
+            secrets:
+              - etcd-client-certs        # mounts the etcd client cert secret into Prometheus
+            {{- end }}
         

@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: otel-operator
+  name: glueops-core-otel
   annotations:
      argocd.argoproj.io/sync-wave: "4"
   finalizers:
@@ -9,7 +9,7 @@ metadata:
 spec:
   destination:
     name: "in-cluster"
-    namespace: glueops-core-otel
+    namespace: glueops-core-monitoring
   project: glueops-core
   syncPolicy:
     syncOptions:
@@ -31,6 +31,5 @@ spec:
       skipCrds: false
       values: |-
         replicaCount: {{ .Values.otel.replicas }}
-        nameOverride: {{ .Values.otel.name_override }}
         manager:
            {{- toYaml .Values.otel.manager | nindent 12 }}

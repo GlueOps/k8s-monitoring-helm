@@ -81,7 +81,6 @@ loki:
 
 otel:
   replicas: 1
-  name_override: "glueops-otel"
   config:
   
   manager:

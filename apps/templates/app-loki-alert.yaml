@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: loki-alert-group-controller
+  name: glueops-core-loki-alert-group-controller
   annotations:
     argocd.argoproj.io/sync-wave: "3"
   finalizers:
@@ -9,7 +9,7 @@ metadata:
 spec:
   destination:
     name: "in-cluster"
-    namespace: glueops-core-loki-alert-group-controller
+    namespace: glueops-core-monitoring
   project: glueops-core
   syncPolicy:
     syncOptions:
@@ -46,7 +46,7 @@ spec:
         deployment:
           envVariables:
             - name: LOKI_API_ENDPOINT
-              value: 'http://loki-gateway.glueops-core-loki.svc.cluster.local'
+              value: 'http://loki-gateway.glueops-core-monitoring.svc.cluster.local'
             - name: ORGANIZATION_ID
               value: '{{ .Values.captain_domain }}'
             - name: SERVER_PORT
@@ -139,9 +139,9 @@ spec:
               hooks:
                 sync:
                   webhook:
-                    url: http://glueops-core-monitoring.glueops-core-loki-alert-group-controller.svc.cluster.local/sync
+                    url: http://glueops-core-loki-alert-group-controller.glueops-core-monitoring.svc.cluster.local/sync
                 finalize:
                   webhook:
-                    url: http://glueops-core-monitoring.glueops-core-loki-alert-group-controller.svc.cluster.local/finalize
+                    url: http://glueops-core-loki-alert-group-controller.glueops-core-monitoring.svc.cluster.local/finalize
                     
         

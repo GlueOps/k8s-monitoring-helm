@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: otel-collector
+  name: glueops-core-otel-collector
   annotations:
     argocd.argoproj.io/sync-wave: "5"
   finalizers:
@@ -9,7 +9,7 @@ metadata:
 spec:
   destination:
     name: "in-cluster"
-    namespace: glueops-core-otel
+    namespace: glueops-core-monitoring
   project: glueops-core
   syncPolicy:
     syncOptions:
