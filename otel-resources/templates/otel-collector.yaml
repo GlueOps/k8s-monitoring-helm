@@ -2,7 +2,7 @@ apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: otel-collector
-  namespace: glueops-core-otel
+  namespace: glueops-core-monitoring
 spec:
   mode: daemonset
   volumes:
@@ -61,7 +61,7 @@ spec:
                     - 0.0.0.0:8888
     exporters:
       otlp/trace:
-        endpoint: grafana-tempo-distributor.glueops-core-tempo:4317
+        endpoint: grafana-tempo-distributor.glueops-core-monitoring:4317
         headers:
           X-Scope-OrgID: "{{ .Values.captain_domain }}"
         tls:
@@ -69,15 +69,15 @@ spec:
       otlphttp/loki:
         headers:
           X-Scope-OrgID: "{{ .Values.captain_domain }}"
-        logs_endpoint: http://loki-write-headless.glueops-core-loki:3100/otlp/v1/logs
+        logs_endpoint: http://loki-write-headless.glueops-core-monitoring:3100/otlp/v1/logs
       otlphttp/trace:
-        endpoint: http://grafana-tempo-distributor.glueops-core-tempo:4318
+        endpoint: http://grafana-tempo-distributor.glueops-core-monitoring:4318
         headers:
           X-Scope-OrgID: "{{ .Values.captain_domain }}"
         tls:
           insecure: true
       prometheusremotewrite:
-        endpoint: http://kps-prometheus.glueops-core-kube-prometheus-stack:9090/api/v1/write
+        endpoint: http://glueops-core-kps-prometheus.glueops-core-monitoring:9090/api/v1/write
         target_info:
           enabled: true
     processors:
@@ -161,7 +161,7 @@ metadata:
   namespace: glueops-core
 spec:
   exporter:
-    endpoint: http://otel-collector-collector.glueops-core-otel.svc.cluster.local:4317
+    endpoint: http://otel-collector-collector.glueops-core-monitoring.svc.cluster.local:4317
   propagators:
     - tracecontext
     - baggage

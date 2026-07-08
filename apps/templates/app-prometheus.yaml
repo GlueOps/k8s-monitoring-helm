@@ -86,8 +86,7 @@ spec:
             patch:
               {{- toYaml .Values.glueops_node_and_tolerations | nindent 14 }}
           {{- toYaml .Values.glueops_node_and_tolerations | nindent 10 }}
-        {{- if .Values.kubeadm.enabled }}
-        kubeEtcd:
+        {{- if (.Values.kubeadm).enabled }}
           serviceMonitor:
             caFile:   /etc/prometheus/secrets/etcd-client-certs/ca.crt
             certFile: /etc/prometheus/secrets/etcd-client-certs/apiserver-etcd-client.crt
@@ -148,8 +147,7 @@ spec:
                     requests:
                       storage: {{ .Values.prometheus.volume_claim_storage_request}}Gi
             hostNetwork: {{ .Values.host_network.enabled }}
-            {{- if .Values.kubeadm.enabled }}
-            secrets:
+            {{- if (.Values.kubeadm).enabled }}
               - etcd-client-certs        # mounts the etcd client cert secret into Prometheus
             {{- end }}
         
