@@ -78,7 +78,7 @@ grafana-admin:
           isDefault: true
         - name: Loki
           type: loki
-          url: http://loki-gateway.glueops-core-monitoring.svc.cluster.local
+          url: http://glueops-core-loki-gateway.glueops-core-monitoring.svc.cluster.local
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
           secureJsonData:
@@ -86,7 +86,7 @@ grafana-admin:
         - name: Tempo
           type: tempo
           uid: de7lydl3hl9fkd
-          url: http://grafana-tempo-query-frontend.glueops-core-monitoring:3200
+          url: http://glueops-core-tempo-query-frontend.glueops-core-monitoring:3200
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
           secureJsonData:
@@ -116,7 +116,7 @@ grafana-dev:
           isDefault: true
         - name: Loki
           type: loki
-          url: http://loki-gateway.glueops-core-monitoring.svc.cluster.local
+          url: http://glueops-core-loki-gateway.glueops-core-monitoring.svc.cluster.local
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
           secureJsonData:
@@ -124,7 +124,7 @@ grafana-dev:
         - name: Tempo
           type: tempo
           uid: de7lydl3hl9fkd
-          url: http://grafana-tempo-query-frontend.glueops-core-monitoring:3200
+          url: http://glueops-core-tempo-query-frontend.glueops-core-monitoring:3200
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
             nodeGraph:
