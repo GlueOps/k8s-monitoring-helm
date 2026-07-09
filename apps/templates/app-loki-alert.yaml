@@ -46,7 +46,7 @@ spec:
         deployment:
           envVariables:
             - name: LOKI_API_ENDPOINT
-              value: 'http://loki-gateway.glueops-core-monitoring.svc.cluster.local'
+              value: 'http://glueops-core-loki-gateway.glueops-core-monitoring.svc.cluster.local'
             - name: ORGANIZATION_ID
               value: '{{ .Values.captain_domain }}'
             - name: SERVER_PORT

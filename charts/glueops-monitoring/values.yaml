@@ -78,7 +78,7 @@ grafana-admin:
           isDefault: true
         - name: Loki
           type: loki
-          url: http://loki-gateway.glueops-core-monitoring.svc.cluster.local
+          url: http://glueops-core-loki-gateway.glueops-core-monitoring.svc.cluster.local
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
           secureJsonData:
@@ -116,7 +116,7 @@ grafana-dev:
           isDefault: true
         - name: Loki
           type: loki
-          url: http://loki-gateway.glueops-core-monitoring.svc.cluster.local
+          url: http://glueops-core-loki-gateway.glueops-core-monitoring.svc.cluster.local
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
           secureJsonData:
