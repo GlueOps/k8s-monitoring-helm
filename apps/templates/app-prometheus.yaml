@@ -148,6 +148,7 @@ spec:
                       storage: {{ .Values.prometheus.volume_claim_storage_request}}Gi
             hostNetwork: {{ .Values.host_network.enabled }}
             {{- if (.Values.kubeadm).enabled }}
+            secrets:
               - etcd-client-certs        # mounts the etcd client cert secret into Prometheus
             {{- end }}
         
