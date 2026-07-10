@@ -9,7 +9,7 @@ metadata:
 spec:
   destination:
     name: "in-cluster"
-    namespace: glueops-core-alerts
+    namespace: glueops-core-monitoring
   project: glueops-core
   syncPolicy:
     syncOptions:

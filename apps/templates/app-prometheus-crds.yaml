@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kube-prometheus-stack-crds
+  name: glueops-core-kps-crds
   annotations:
     argocd.argoproj.io/sync-wave: "1"
   finalizers:
@@ -9,7 +9,7 @@ metadata:
 spec:
   destination:
     name: "in-cluster"
-    namespace: glueops-core-kube-prometheus-stack
+    namespace: glueops-core-monitoring
   project: glueops-core
   syncPolicy:
     syncOptions:

@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: otel-collector
+  name: glueops-core-otel-collector
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-wave: "8"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
     name: "in-cluster"
-    namespace: glueops-core-otel
+    namespace: glueops-core-monitoring
   project: glueops-core
   syncPolicy:
     syncOptions:
@@ -26,7 +26,7 @@ spec:
       limit: 5
   source:
     repoURL: https://github.com/GlueOps/k8s-monitoring-helm.git
-    targetRevision: main
+    targetRevision: feat/issues-july
     path: otel-resources
     helm:
       values: |

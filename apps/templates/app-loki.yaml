@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: loki
+  name: glueops-core-loki
   annotations:
     argocd.argoproj.io/sync-wave: "5"
   finalizers:
@@ -9,7 +9,7 @@ metadata:
 spec:
   destination:
     name: "in-cluster"
-    namespace: glueops-core-loki
+    namespace: glueops-core-monitoring
   project: glueops-core
   syncPolicy:
     syncOptions:

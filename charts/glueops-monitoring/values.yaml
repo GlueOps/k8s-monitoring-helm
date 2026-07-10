@@ -7,7 +7,7 @@ global:
     allowInsecureImages: true
 
 kube-prometheus-stack:
-  fullnameOverride: "kps"
+  fullnameOverride: "glueops-core-kps"
   kubeStateMetrics:
     enabled: true
   prometheus:
@@ -24,7 +24,7 @@ kube-prometheus-stack:
       datasources:
         enabled: true
         isDefaultDatasource: true
-        url: http://kube-thanos-stack-query.glueops-core-kube-prometheus-stack:9090/
+        url: http://glueops-core-thanos-query.glueops-core-monitoring:9090/
         name: Prometheus
         uid: prometheus
 
@@ -59,7 +59,7 @@ grafana-admin:
       enabled: true
       defaultDatasourceEnabled: false
       isDefaultDatasource: true
-      url: http://glueops-monitoring-thanos-query.glueops-core-kube-prometheus-stack:9090/
+      url: http://glueops-core-thanos-query.glueops-core-monitoring:9090/
       name: Prometheus
       uid: prometheus
   adminPassword: "{{ .Values.grafana.admin_password | default \"changeme\" }}"
@@ -74,11 +74,11 @@ grafana-admin:
         - name: Prometheus
           type: prometheus
           uid: prometheus
-          url: http://glueops-monitoring-thanos-query.glueops-core-kube-prometheus-stack:9090/
+          url: http://glueops-core-thanos-query.glueops-core-monitoring:9090/
           isDefault: true
         - name: Loki
           type: loki
-          url: http://loki-gateway.glueops-core-loki.svc.cluster.local
+          url: http://glueops-core-loki-gateway.glueops-core-monitoring.svc.cluster.local
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
           secureJsonData:
@@ -86,7 +86,7 @@ grafana-admin:
         - name: Tempo
           type: tempo
           uid: de7lydl3hl9fkd
-          url: http://glueops-monitoring-thanos-query-frontend.glueops-core-tempo:3200
+          url: http://glueops-core-tempo-query-frontend.glueops-core-monitoring:3200
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
           secureJsonData:
@@ -102,7 +102,7 @@ grafana-dev:
       label: grafana_developer_dashboard
     defaultDatasourceEnabled: false
     isDefaultDatasource: true
-    url: http://glueops-monitoring-thanos-query.glueops-core-kube-prometheus-stack:9090/
+    url: http://glueops-core-thanos-query.glueops-core-monitoring:9090/
     name: Prometheus
     uid: prometheus
   datasources:
@@ -112,11 +112,11 @@ grafana-dev:
         - name: Prometheus
           type: prometheus
           uid: prometheus
-          url: http://glueops-monitoring-thanos-query.glueops-core-kube-prometheus-stack:9090/
+          url: http://glueops-core-thanos-query.glueops-core-monitoring:9090/
           isDefault: true
         - name: Loki
           type: loki
-          url: http://loki-gateway.glueops-core-loki.svc.cluster.local
+          url: http://glueops-core-loki-gateway.glueops-core-monitoring.svc.cluster.local
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
           secureJsonData:
@@ -124,7 +124,7 @@ grafana-dev:
         - name: Tempo
           type: tempo
           uid: de7lydl3hl9fkd
-          url: http://grafana-tempo-query-frontend.glueops-core-tempo:3200
+          url: http://glueops-core-tempo-query-frontend.glueops-core-monitoring:3200
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
             nodeGraph:

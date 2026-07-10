@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: grafana-tempo
+  name: glueops-core-tempo
   annotations:
     argocd.argoproj.io/sync-wave: "4"
   finalizers:
@@ -9,7 +9,7 @@ metadata:
 spec:
   destination:
     name: "in-cluster"
-    namespace: glueops-core-tempo
+    namespace: glueops-core-monitoring
   project: glueops-core
   syncPolicy:
     syncOptions:
@@ -62,7 +62,7 @@ spec:
             storage:
               # Remote-write to Prometheus/OSD/etc. Update the URL.
               remote_write:
-                - url: http://kps-prometheus.glueops-core-kube-prometheus-stack:9090/api/v1/write
+                - url: http://glueops-core-kps-prometheus.glueops-core-monitoring:9090/api/v1/write
                 
         compactor:
           config:
