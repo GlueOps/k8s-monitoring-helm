@@ -26,7 +26,7 @@ spec:
       limit: 5
   source:
     repoURL: https://github.com/GlueOps/k8s-monitoring-helm.git
-    targetRevision: feat/issues-july
+    targetRevision: main
     path: otel-resources
     helm:
       values: |
