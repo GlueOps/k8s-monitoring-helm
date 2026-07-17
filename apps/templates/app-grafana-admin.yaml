@@ -58,6 +58,7 @@ spec:
                 url: http://glueops-core-loki-gateway.glueops-core-monitoring.svc.cluster.local
                 jsonData:
                   httpHeaderName1: "X-Scope-OrgID"
+                  timeout: 900
                 secureJsonData:
                   httpHeaderValue1: "{{ .Values.captain_domain }}"
               - name: Tempo
@@ -91,6 +92,7 @@ spec:
           url: http://glueops-core-loki-gateway.glueops-core-monitoring.svc.cluster.local
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
+            timeout: 900
           secureJsonData:
             httpHeaderValue1: "{{ .Values.captain_domain }}"
         - name: Tempo
@@ -111,6 +113,10 @@ spec:
 
 
         grafana.ini:
+          timeout: 900
+          dataproxy:
+            timeout: 900
+            dataproxy_row_limit: 1000000
           users:
             viewers_can_edit: true
           server:

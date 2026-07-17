@@ -80,9 +80,13 @@ spec:
           limits_config:
             ingestion_rate_mb: 24      # Prevent high ingestion rates
             ingestion_burst_size_mb: 36
+            query_timeout: 900s
             max_query_parallelism: 4    # Limit concurrent queries
             max_query_series: 10000     # Prevent large query memory spikes
             max_streams_per_user: 1000  # Restrict high memory-consuming logs
+          server:
+            http_server_read_timeout: 900s
+            http_server_write_timeout: 900s
           structuredConfig:
             ingester:
                 max_chunk_age: 2m         # Flush chunks quickly to S3
