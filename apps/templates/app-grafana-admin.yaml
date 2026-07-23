@@ -67,6 +67,8 @@ spec:
                 url: http://glueops-core-tempo-query-frontend.glueops-core-monitoring:3200
                 jsonData:
                   httpHeaderName1: "X-Scope-OrgID"
+                  streamingEnabled:
+                    search: true
                 secureJsonData:
                   httpHeaderValue1: "{{ .Values.captain_domain }}"    
           
@@ -101,12 +103,14 @@ spec:
           url: http://glueops-core-tempo-query-frontend.glueops-core-monitoring:3200
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
+            streamingEnabled:
+              search: true
             nodeGraph:
               enabled: true
             serviceMap:
               datasourceUid: prometheus
             tracesToMetrics:
-              datasourceUid: prometheus  
+              datasourceUid: prometheus
           secureJsonData:
             httpHeaderValue1: "{{ .Values.captain_domain }}"
           
