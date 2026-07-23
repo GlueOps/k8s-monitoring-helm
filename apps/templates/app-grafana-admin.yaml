@@ -78,7 +78,8 @@ spec:
           tag: {{ .Values.container_images.app_kube_prometheus_stack.grafana.image.tag }}
         plugins:
           - yesoreyeram-infinity-datasource
-          - https://github.com/grafana/grafana-tempo-datasource/releases/download/v13.1.5/tempo-13.1.5.linux_amd64.zip;tempo
+          - tempo@13.1.5
+
         assertNoLeakedSecrets: false
         ingress:
           enabled: true
@@ -116,12 +117,13 @@ spec:
             httpHeaderValue1: "{{ .Values.captain_domain }}"
           
 
-
         grafana.ini:
           timeout: 900
           dataproxy:
             timeout: 900
             dataproxy_row_limit: 1000000
+          plugin.tempo:
+            as_external: true
           users:
             viewers_can_edit: true
           server:
@@ -141,4 +143,3 @@ spec:
             role_attribute_path: contains(groups[*], '{{ .Values.grafana.github_admin_org_name }}:{{ .Values.grafana.github_admin_team_name }}') && 'Admin' || 'Viewer'
 
       
-
