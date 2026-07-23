@@ -82,7 +82,7 @@ spec:
           tag: {{ .Values.container_images.app_kube_prometheus_stack.grafana.image.tag }}
         plugins:
           - yesoreyeram-infinity-datasource
-          - tempo@13.1.5
+          - tempo 13.1.5
 
         assertNoLeakedSecrets: false
         ingress:
