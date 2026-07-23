@@ -70,12 +70,6 @@ spec:
         headers:
           X-Scope-OrgID: "{{ .Values.captain_domain }}"
         logs_endpoint: http://loki-write-headless.glueops-core-monitoring:3100/otlp/v1/logs
-      otlphttp/trace:
-        endpoint: http://glueops-core-tempo-distributor.glueops-core-monitoring:4318
-        headers:
-          X-Scope-OrgID: "{{ .Values.captain_domain }}"
-        tls:
-          insecure: true
       prometheusremotewrite:
         endpoint: http://glueops-core-kps-prometheus.glueops-core-monitoring:9090/api/v1/write
         target_info:
@@ -148,7 +142,6 @@ spec:
         traces:
           exporters:
             - otlp/trace
-            - otlphttp/trace
             - spanmetrics
           receivers:
             - otlp
