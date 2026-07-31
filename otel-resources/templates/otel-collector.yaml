@@ -3,11 +3,6 @@ kind: OpenTelemetryCollector
 metadata:
   name: otel-collector
   namespace: glueops-core-monitoring
-  annotations:
-    # CRDs ship with the opentelemetry-operator installed by glueops-core-otel at
-    # wave 4, so this CR must apply later and skip the dry run until then.
-    argocd.argoproj.io/sync-wave: "8"
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   mode: daemonset
   volumes:
@@ -157,9 +152,6 @@ kind: Instrumentation
 metadata:
   name: glueops-instrumentation
   namespace: glueops-core-monitoring
-  annotations:
-    argocd.argoproj.io/sync-wave: "8"
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   exporter:
     endpoint: http://otel-collector-collector.glueops-core-monitoring.svc.cluster.local:4317

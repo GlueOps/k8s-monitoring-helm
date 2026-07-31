@@ -82,7 +82,12 @@ loki:
 otel:
   replicas: 1
   config:
-  
+
+   collector:
+    repoURL: https://github.com/GlueOps/otel-resources-helm.git
+    targetRevision: v0.1.0
+    path: otel-resources
+
   manager:
     image:
       repository: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator
