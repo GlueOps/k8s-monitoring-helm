@@ -25,9 +25,9 @@ spec:
         maxDuration: 3m0s
       limit: 5
   source:
-    repoURL: https://github.com/GlueOps/k8s-monitoring-helm.git
-    targetRevision: feat/issues-july
-    path: otel-resources
+    repoURL: https://github.com/GlueOps/otel-resources.git
+    targetRevision: v0.1.0
+    path: .
     helm:
       values: |
         captain_domain: {{ .Values.captain_domain }}
