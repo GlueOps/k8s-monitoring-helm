@@ -86,11 +86,13 @@ spec:
             patch:
               {{- toYaml .Values.glueops_node_and_tolerations | nindent 14 }}
           {{- toYaml .Values.glueops_node_and_tolerations | nindent 10 }}
-        {{- if (.Values.kubeadm).enabled }}
+        {{- if and .Values.kubeadm .Values.kubeadm.enabled }}
+        kubeEtcd:
+          enabled: true
           serviceMonitor:
-            caFile:   /etc/prometheus/secrets/etcd-client-certs/ca.crt
+            caFile: /etc/prometheus/secrets/etcd-client-certs/ca.crt
             certFile: /etc/prometheus/secrets/etcd-client-certs/apiserver-etcd-client.crt
-            keyFile:  /etc/prometheus/secrets/etcd-client-certs/apiserver-etcd-client.key
+            keyFile: /etc/prometheus/secrets/etcd-client-certs/apiserver-etcd-client.key
             scheme: https
           service:
             port: 2379
