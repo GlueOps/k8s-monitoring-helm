@@ -82,7 +82,12 @@ loki:
 otel:
   replicas: 1
   config:
-  
+
+  collector:
+    repoURL: https://github.com/GlueOps/otel-resources-helm.git
+    targetRevision: v0.1.0
+    path: .
+
   manager:
     image:
       repository: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator
@@ -159,3 +164,5 @@ dex:
   grafana:
     # -- Specify a unique password here. This will be used to connect grafana via OAuth to the Dex IDP. You can create one with in bash `openssl rand -base64 32`
     client_secret: A5PHgGmQGWo8Es4XKb4lvU6buQT3qLUntjjyAXlthvD8f
+
+

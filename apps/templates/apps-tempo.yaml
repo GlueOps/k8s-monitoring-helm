@@ -31,6 +31,9 @@ spec:
     helm:
       skipCrds: true
       values: |-
+        tempo:
+          structuredConfig:
+            stream_over_http_enabled: true
         overrides:
           defaults:
             ingestion:

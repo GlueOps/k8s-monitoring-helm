@@ -1,3 +1,4 @@
+
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -55,6 +56,7 @@ spec:
                 url: http://glueops-core-loki-gateway.glueops-core-monitoring.svc.cluster.local
                 jsonData:
                   httpHeaderName1: "X-Scope-OrgID"
+                  timeout: 900
                 secureJsonData:
                   httpHeaderValue1: "{{ .Values.captain_domain }}"
               - name: Tempo
@@ -63,12 +65,14 @@ spec:
                 url: http://glueops-core-tempo-query-frontend.glueops-core-monitoring:3200
                 jsonData:
                   httpHeaderName1: "X-Scope-OrgID"
+                  streamingEnabled:
+                    search: true
                   nodeGraph:
                     enabled: true
                   serviceMap:
                     datasourceUid: prometheus
                   tracesToMetrics:
-                    datasourceUid: prometheus  
+                    datasourceUid: prometheus
                 secureJsonData:
                   httpHeaderValue1: "{{ .Values.captain_domain }}"    
           
@@ -78,6 +82,8 @@ spec:
           tag: {{ .Values.container_images.app_kube_prometheus_stack.grafana.image.tag }}
         plugins:
           - yesoreyeram-infinity-datasource
+          - tempo 13.1.5
+
         assertNoLeakedSecrets: false
         ingress:
           enabled: true
@@ -94,6 +100,7 @@ spec:
           url: http://glueops-core-loki-gateway.glueops-core-monitoring.svc.cluster.local
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
+            timeout: 900
           secureJsonData:
             httpHeaderValue1: "{{ .Values.captain_domain }}"
         - name: Tempo
@@ -102,16 +109,24 @@ spec:
           url: http://glueops-core-tempo-query-frontend.glueops-core-monitoring:3200
           jsonData:
             httpHeaderName1: "X-Scope-OrgID"
+            streamingEnabled:
+              search: true
             nodeGraph:
               enabled: true
             serviceMap:
               datasourceUid: prometheus
             tracesToMetrics:
-              datasourceUid: prometheus 
+              datasourceUid: prometheus
           secureJsonData:
             httpHeaderValue1: "{{ .Values.captain_domain }}"
            
         grafana.ini:
+          timeout: 900
+          dataproxy:
+            timeout: 900
+            dataproxy_row_limit: 1000000
+          plugin.tempo:
+            as_external: true
           users:
             viewers_can_edit: true
           server:
@@ -131,4 +146,3 @@ spec:
             role_attribute_path: contains(groups[*], '{{ .Values.grafana.github_admin_org_name }}:{{ .Values.grafana.github_admin_team_name }}') && 'Admin' || 'Viewer'
 
       
-
