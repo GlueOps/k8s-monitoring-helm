@@ -71,7 +71,8 @@ spec:
             apiVersion: metacontroller.k8s.io/v1alpha1
             kind: CompositeController
             metadata:
-              name: {{ .Release.Name }}
+              # cluster-scoped and rendered by the umbrella: an explicit name, not {{ .Release.Name }} (see appName above)
+              name: glueops-core-loki-alert-group-controller
             spec:
               generateSelector: true
               parentResource:
