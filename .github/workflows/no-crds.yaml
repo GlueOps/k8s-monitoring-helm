@@ -21,6 +21,6 @@ jobs:
       - name: Tool versions (yq and jq are preinstalled on ubuntu-latest)
         run: helm version --short && yq --version && jq --version && kubectl version --client
       - name: Lint the apps chart
-        run: helm lint apps
+        run: helm lint apps -f apps/ci/values.yaml
       - name: Render every Application's chart and assert no CRDs
         run: CHART_DIR=apps hack/check-no-crds.sh
