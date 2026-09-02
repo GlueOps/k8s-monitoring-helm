@@ -28,6 +28,7 @@ spec:
     chart: loki
     targetRevision: 7.0.0
     helm:
+      skipCrds: true   # rollout-operator / grafana-agent-operator subcharts ship crds/; CRDs come from platform-crds
       parameters:
         - name: loki.auth_enabled
           value: 'true'

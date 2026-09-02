@@ -29,7 +29,10 @@ spec:
     targetRevision: 0.13.0
     helm:
       values: |
-        appName: '{{ .Release.Name }}'
+        # Not {{ .Release.Name }}: this string is rendered by the umbrella (release "glueops-core-monitoring"), which
+        # named the Deployment/Service after the umbrella while the CompositeController hooks below point at
+        # glueops-core-loki-alert-group-controller — so metacontroller could never reach the sync/finalize webhooks.
+        appName: 'glueops-core-loki-alert-group-controller'
         image:
           registry: {{ .Values.container_images.app_loki_alert_group_controller.loki_alert_group_controller.image.registry }}
           repository: {{ .Values.container_images.app_loki_alert_group_controller.loki_alert_group_controller.image.repository }}
@@ -61,65 +64,9 @@ spec:
               memory: 128Mi
 
 
+        # The lokialertrulegroups.metacontroller.glueops.dev CRD is installed by the
+        # platform-crds bundle (glueops/lokialertrulegroups.yaml); only the controller is here.
         customResources:
-          - |-
-            apiVersion: apiextensions.k8s.io/v1
-            kind: CustomResourceDefinition
-            metadata:
-              name: lokialertrulegroups.metacontroller.glueops.dev
-            spec:
-              group: metacontroller.glueops.dev
-              names:
-                kind: LokiAlertRuleGroup
-                listKind: LokiAlertRuleGroupList
-                plural: lokialertrulegroups
-                singular: lokialertrulegroup
-              scope: Namespaced
-              versions:
-                - name: v1alpha1
-                  served: true
-                  storage: true
-                  schema:
-                    openAPIV3Schema:
-                      type: object
-                      properties:
-                        spec:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                            rules:
-                              type: array
-                              items:
-                                type: object
-                                properties:
-                                  alert:
-                                    type: string
-                                  expr:
-                                    type: string
-                                  for:
-                                    type: string
-                                  labels:
-                                    type: object
-                                    additionalProperties:
-                                      type: string
-                                  annotations:
-                                    type: object
-                                    additionalProperties:
-                                      type: string
-                        status:
-                          type: object
-                          properties:
-                            health:
-                              type: object
-                              properties:
-                                status:
-                                  type: string
-                  subresources:
-                   status: {}
-
-
-
           - |-
             apiVersion: metacontroller.k8s.io/v1alpha1
             kind: CompositeController

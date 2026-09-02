@@ -28,8 +28,13 @@ spec:
     chart: opentelemetry-operator
     targetRevision: 0.114.1
     helm:
-      skipCrds: false
+      # CRDs come from the platform-crds bundle (applied by captain_utils before Argo CD).
+      # This chart renders its CRDs as templates (conf/crds/, gated on crds.create), so
+      # skipCrds alone is not enough: crds.create must be false too.
+      skipCrds: true
       values: |-
+        crds:
+          create: false
         replicaCount: {{ .Values.otel.replicas }}
         manager:
            {{- toYaml .Values.otel.manager | nindent 12 }}
