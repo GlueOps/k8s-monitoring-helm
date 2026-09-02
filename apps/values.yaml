@@ -43,32 +43,42 @@ host_network:
           tls:
             internal_port: 45041
 
-captain_domain: test
+captain_domain: placeholder_captain_domain
+# previously (dev cluster): captain_domain: test
 
 thanos:
-  storage:
-    type: s3
-    config:
-        bucket: nonprodgliese667cconglueopsrocks-eca3-thanos
-        endpoint: fsn1.your-objectstorage.com
-        access_key: JYAXBKO07A3I9WK1TXHJ
-        secret_key: O1ZAocvfDLoYWlkVoD1Fnc2ipAjO73ZTWyCygmLv
+  # -- filled by the platform chart (platform-helm-chart-platform values `thanos.storage`, from terraform
+  # `thanos_storage`). Deliberately empty: Helm map-merges values, so any default key here would leak into every
+  # tenant's Thanos config. https://thanos.io/tip/thanos/storage.md/
+  storage: {}
+  # Example of what the platform chart passes (the former default; these keys are rotated/invalid):
+  # storage:
+  #   type: s3
+  #   config:
+  #     bucket: nonprodgliese667cconglueopsrocks-eca3-thanos
+  #     endpoint: fsn1.your-objectstorage.com
+  #     access_key: JYAXBKO07A3I9WK1TXHJ
+  #     secret_key: O1ZAocvfDLoYWlkVoD1Fnc2ipAjO73ZTWyCygmLv
 
 loki:
-  storage:
-   bucketNames:
-        chunks: nonprodgliese667cconglueopsrocks-eca3-loki
-        ruler: nonprodgliese667cconglueopsrocks-eca3-loki
-        admin: nonprodgliese667cconglueopsrocks-eca3-loki
-   type: s3
-   s3:
-      s3: nonprodgliese667cconglueopsrocks-eca3-loki
-      endpoint: https://fsn1.your-objectstorage.com
-      region: us-east-1
-      secretAccessKey: O1ZAocvfDLoYWlkVoD1Fnc2ipAjO73ZTWyCygmLv
-      accessKeyId: JYAXBKO07A3I9WK1TXHJ
-      s3ForcePathStyle: false
-      insecure: false
+  # -- filled by the platform chart (`loki.storage`, from terraform `loki_storage`); empty for the same reason as thanos.storage.
+  # https://grafana.com/docs/loki/latest/configure/#storage_config
+  storage: {}
+  # Example of what the platform chart passes (the former default; these keys are rotated/invalid):
+  # storage:
+  #   bucketNames:
+  #     chunks: nonprodgliese667cconglueopsrocks-eca3-loki
+  #     ruler: nonprodgliese667cconglueopsrocks-eca3-loki
+  #     admin: nonprodgliese667cconglueopsrocks-eca3-loki
+  #   type: s3
+  #   s3:
+  #     s3: nonprodgliese667cconglueopsrocks-eca3-loki
+  #     endpoint: https://fsn1.your-objectstorage.com
+  #     region: us-east-1
+  #     accessKeyId: JYAXBKO07A3I9WK1TXHJ
+  #     secretAccessKey: O1ZAocvfDLoYWlkVoD1Fnc2ipAjO73ZTWyCygmLv
+  #     s3ForcePathStyle: false
+  #     insecure: false
   chunkConfig:
     replicas: 2
     maxItemMemory: 2
@@ -131,20 +141,30 @@ otel:
         memory: 64Mi    
 
 tempo:
-  storage:
-    placeholder_tempo_storage: {}
+  # -- filled by the platform chart (`tempo.storage`, from terraform `tempo_storage`); empty for the same reason as thanos.storage.
+  # https://grafana.com/docs/tempo/latest/configuration/#storage
+  storage: {}
+  # Example of what the platform chart passes (same bucket/key scheme as loki/thanos above):
+  # storage:
+  #   backend: s3
+  #   s3:
+  #     bucket: nonprodgliese667cconglueopsrocks-eca3-tempo
+  #     endpoint: fsn1.your-objectstorage.com
+  #     access_key: JYAXBKO07A3I9WK1TXHJ
+  #     secret_key: O1ZAocvfDLoYWlkVoD1Fnc2ipAjO73ZTWyCygmLv
+  #     insecure: false
   remote_url: ["http://localhost:9090/api/v1/write"]
 
   compaction_block_retention: "168h"
 
 grafana:
   # @ignored
-  github_admin_org_name: glueops-rocks
+  github_admin_org_name: placeholder_admin_github_org_name   # previously: glueops-rocks
   # @ignored
   github_admin_team_name: grafana_super_admins
-  github_other_org_names: development-tenant-gliese667cc
+  github_other_org_names: placeholder_tenant_github_org_name   # previously: development-tenant-gliese667cc
   # -- Default admin password. CHANGE THIS!!!!
-  admin_password: svOAByq1KYa9YaHZAdoNFfBVIcJrkUvhZapNvVXdhQ5L7
+  admin_password: placeholder_grafana_admin_password   # previously (rotated): svOAByq1KYa9YaHZAdoNFfBVIcJrkUvhZapNvVXdhQ5L7
 container_images:
   
   app_kube_prometheus_stack:
@@ -163,6 +183,6 @@ container_images:
 dex:
   grafana:
     # -- Specify a unique password here. This will be used to connect grafana via OAuth to the Dex IDP. You can create one with in bash `openssl rand -base64 32`
-    client_secret: A5PHgGmQGWo8Es4XKb4lvU6buQT3qLUntjjyAXlthvD8f
+    client_secret: placeholder_dex_grafana_client_secret   # previously (rotated): A5PHgGmQGWo8Es4XKb4lvU6buQT3qLUntjjyAXlthvD8f
 
 
