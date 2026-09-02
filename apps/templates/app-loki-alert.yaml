@@ -29,7 +29,10 @@ spec:
     targetRevision: 0.13.0
     helm:
       values: |
-        appName: '{{ .Release.Name }}'
+        # Not {{ .Release.Name }}: this string is rendered by the umbrella (release "glueops-core-monitoring"), which
+        # named the Deployment/Service after the umbrella while the CompositeController hooks below point at
+        # glueops-core-loki-alert-group-controller — so metacontroller could never reach the sync/finalize webhooks.
+        appName: 'glueops-core-loki-alert-group-controller'
         image:
           registry: {{ .Values.container_images.app_loki_alert_group_controller.loki_alert_group_controller.image.registry }}
           repository: {{ .Values.container_images.app_loki_alert_group_controller.loki_alert_group_controller.image.repository }}
