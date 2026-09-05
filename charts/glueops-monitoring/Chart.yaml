@@ -15,7 +15,7 @@ dependencies:
     version: "7.0.0"
     repository: "https://grafana.github.io/helm-charts"
   - name: opentelemetry-operator
-    version: "0.114.1"
+    version: "0.119.0"
     repository: "https://open-telemetry.github.io/opentelemetry-helm-charts"
   - name: grafana
     alias: grafana-dev
