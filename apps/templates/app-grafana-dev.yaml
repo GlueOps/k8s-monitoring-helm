@@ -144,5 +144,28 @@ spec:
             ssl_verify: false
             org_attribute_path:   
             role_attribute_path: contains(groups[*], '{{ .Values.grafana.github_admin_org_name }}:{{ .Values.grafana.github_admin_team_name }}') && 'Admin' || 'Viewer'
+          # CLI access (GlueOps/toolbox). Accepts the same Dex id_token the browser SSO
+          # above issues, so `promtool`, `logcli` and `tempo-cli` can query through the
+          # Grafana datasource proxy without a browser or a service-account token.
+          #
+          # The token arrives in X-JWT-Assertion rather than Authorization, because the
+          # edge (oauth2-proxy) consumes Authorization for itself and Traefik's forwardauth
+          # strips it before the request reaches Grafana. X-JWT-Assertion is in no
+          # authResponseHeaders list, so it passes through untouched -- which is why this
+          # needs no bearer-preserving middleware, unlike ArgoCD.
+          #
+          # Same audience as every other CLI surface ("toolbox", the public Dex client
+          # platform-helm-chart-platform creates) and the same role expression as the
+          # browser flow above, so a user's role is identical whichever way they arrive.
+          auth.jwt:
+            enabled: true
+            header_name: X-JWT-Assertion
+            username_claim: email
+            email_claim: email
+            jwk_set_url: https://dex.{{ .Values.captain_domain }}/keys
+            expect_claims: '{"iss": "https://dex.{{ .Values.captain_domain }}", "aud": "toolbox"}'
+            cache_ttl: 60m
+            auto_sign_up: true
+            role_attribute_path: contains(groups[*], '{{ .Values.grafana.github_admin_org_name }}:{{ .Values.grafana.github_admin_team_name }}') && 'Admin' || 'Viewer'
 
       
