@@ -26,7 +26,7 @@ spec:
   source:
     repoURL: https://helm.gpkg.io/project-template
     chart: app
-    targetRevision: 0.13.0
+    targetRevision: 0.14.1
     helm:
       values: |
         # Not {{ .Release.Name }}: this string is rendered by the umbrella (release "glueops-core-monitoring"), which
