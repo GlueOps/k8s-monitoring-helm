@@ -60,9 +60,28 @@ spec:
           enabled: true
         compactor:
           enabled: true
-          retentionResolutionRaw: 15d
-          retentionResolution5m: 30d
-          retentionResolution1h: 10y
+          retentionResolutionRaw: {{ .Values.thanos.compactor.retention_raw }}
+          retentionResolution5m: {{ .Values.thanos.compactor.retention_5m }}
+          retentionResolution1h: {{ .Values.thanos.compactor.retention_1h }}
+          # Scratch space: must hold the largest single compaction (all input blocks + the output block). Changing the
+          # size needs the PVC deleted and recreated unless the storage class supports volume expansion; the data is
+          # only a cache (everything lives in object storage).
+          persistence:
+            size: {{ .Values.thanos.compactor.disk_size }}
+          {{- if or (not .Values.thanos.compactor.downsampling_enabled) .Values.thanos.compactor.max_compaction_level }}
+          extraFlags:
+            {{- if not .Values.thanos.compactor.downsampling_enabled }}
+            # 5m/1h downsampled data only helps queries over ranges far longer than the retention we keep.
+            - --downsampling.disable
+            {{- end }}
+            {{- with .Values.thanos.compactor.max_compaction_level }}
+            # Caps block size (3 = 2d blocks, Thanos default 4 = 14d). Bounds the compactor's disk need and makes
+            # retention granular (a block is deleted only once its newest sample is past retention). Hidden upstream
+            # debug flag; the compactor logs a warning when it is below the default. 1h downsampling needs >=10d blocks,
+            # so only cap the level when downsampling is disabled or 1h data isn't needed.
+            - --debug.max-compaction-level={{ . }}
+            {{- end }}
+          {{- end }}
           resources:
             requests:
               cpu: 2
