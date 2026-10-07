@@ -13,7 +13,7 @@ spec:
   project: glueops-core
   syncPolicy:
     syncOptions:
-      - Replace=true
+      - ServerSideApply=true
     automated:
       prune: true
       selfHeal: true

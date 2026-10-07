@@ -14,6 +14,7 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
     automated:
       prune: true
       selfHeal: true
@@ -30,20 +31,12 @@ spec:
     helm:
       skipCrds: true
       values: |-
-        sidecar:
-          datasources:
-            enabled: true
-            defaultDatasourceEnabled: false
-            isDefaultDatasource: true
-            url: http://glueops-core-thanos-query.glueops-core-monitoring:9090/
-            name: Prometheus
-            uid: prometheus
         adminPassword: "{{ .Values.grafana.admin_password }}"
         sidecar:
-         dashboards:
-          enabled: true
-          label: grafana_cluster_administrator_dashboard
-          searchNamespace: glueops-core-monitoring
+          dashboards:
+            enabled: true
+            label: grafana_cluster_administrator_dashboard
+            searchNamespace: glueops-core-monitoring
         datasources:
           datasources.yaml:
             apiVersion: 1
