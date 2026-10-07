@@ -34,15 +34,10 @@ spec:
       values: |-
         adminPassword: "{{ .Values.grafana.admin_password }}"
         sidecar:
-         dashboards:
-          enabled: true
-          label: grafana_developer_dashboard
-          searchNamespace: glueops-core-monitoring
-          defaultDatasourceEnabled: false
-          isDefaultDatasource: true
-          url: http://glueops-core-thanos-query.glueops-core-monitoring:9090/
-          name: Prometheus
-          uid: prometheus
+          dashboards:
+            enabled: true
+            label: grafana_developer_dashboard
+            searchNamespace: glueops-core-monitoring
         datasources:
           datasources.yaml:
             apiVersion: 1
