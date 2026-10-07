@@ -47,6 +47,21 @@ captain_domain: placeholder_captain_domain
 # previously (dev cluster): captain_domain: test
 
 thanos:
+  compactor:
+    # -- raw / 5m / 1h retention in the bucket. With downsampling disabled no 5m/1h blocks are created; keep their
+    # retention equal to raw so any existing downsampled blocks are cleaned up too ("0d" would mean keep forever).
+    retention_raw: 15d
+    retention_5m: 15d
+    retention_1h: 15d
+    # -- create 5m/1h downsampled blocks (needed for long-range queries over months/years)
+    downsampling_enabled: false
+    # -- max compaction level (3 = 2-day blocks; empty = Thanos default 4 = 14-day blocks, required for 1h downsampling)
+    max_compaction_level: 3
+    # -- compactor scratch disk; must fit the largest compaction (~2 days of blocks in + out at level 3)
+    disk_size: 20Gi
+    # -- merge the two HA Prometheus replicas' blocks into one copy in the bucket (~halves storage). Experimental
+    # upstream and irreversible for merged blocks: back up / version the bucket before enabling on a cluster with history.
+    dedup_enabled: false
   # -- filled by the platform chart (platform-helm-chart-platform values `thanos.storage`, from terraform
   # `thanos_storage`). Deliberately empty: Helm map-merges values, so any default key here would leak into every
   # tenant's Thanos config. https://thanos.io/tip/thanos/storage.md/
@@ -61,6 +76,8 @@ thanos:
   #     secret_key: O1ZAocvfDLoYWlkVoD1Fnc2ipAjO73ZTWyCygmLv
 
 loki:
+  # -- how long logs are kept (limits_config.retention_period). Must be a multiple of 24h.
+  retention_period: 360h
   # -- filled by the platform chart (`loki.storage`, from terraform `loki_storage`); empty for the same reason as thanos.storage.
   # https://grafana.com/docs/loki/latest/configure/#storage_config
   storage: {}
