@@ -162,8 +162,6 @@ tempo:
   remote_url: ["http://localhost:9090/api/v1/write"]
 
   compaction_block_retention: "168h"
-  # -- ingester complete_block_timeout: how long a flushed block stays queryable on the ingester
-  ingester_complete_block_timeout: "1m"
   # -- ingester max_block_duration: how often a block is cut and flushed; empty keeps the tempo default (30m)
   ingester_max_block_duration: ""
 
