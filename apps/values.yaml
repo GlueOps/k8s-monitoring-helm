@@ -12,6 +12,9 @@ prometheus:
   alertmanager_log_level: info
   retentionSize: "10GB"
   retention: 1d
+  # -- Prometheus TSDB block size (thanos.blockSize); the sidecar ships a block to object storage this often.
+  # Keep 2h outside short-lived test clusters.
+  thanos_block_size: "2h"
 
 glueops_node_and_tolerations:
   nodeSelector:
@@ -59,6 +62,8 @@ thanos:
   #     endpoint: fsn1.your-objectstorage.com
   #     access_key: JYAXBKO07A3I9WK1TXHJ
   #     secret_key: O1ZAocvfDLoYWlkVoD1Fnc2ipAjO73ZTWyCygmLv
+  # -- store gateway --sync-block-duration (how often it picks up new blocks); empty keeps the thanos default (15m)
+  storegateway_sync_block_duration: ""
 
 loki:
   # -- filled by the platform chart (`loki.storage`, from terraform `loki_storage`); empty for the same reason as thanos.storage.
@@ -156,6 +161,10 @@ tempo:
   remote_url: ["http://localhost:9090/api/v1/write"]
 
   compaction_block_retention: "168h"
+  # -- ingester complete_block_timeout: how long a flushed block stays queryable on the ingester
+  ingester_complete_block_timeout: "1m"
+  # -- ingester max_block_duration: how often a block is cut and flushed; empty keeps the tempo default (30m)
+  ingester_max_block_duration: ""
 
 grafana:
   # @ignored

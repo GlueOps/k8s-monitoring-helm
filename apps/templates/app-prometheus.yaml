@@ -129,6 +129,9 @@ spec:
             thanos:
               baseImage: quay.io/thanos/thanos
               version: v0.38.0
+              # TSDB block size, i.e. how often the sidecar has a block to ship to object storage. Prometheus
+              # default 2h; only shrink it for short-lived test clusters (see the blockSize warning in the CRD).
+              blockSize: {{ .Values.prometheus.thanos_block_size | default "2h" }}
               objectStorageConfig:
                 secret: 
                 {{- toYaml .Values.thanos.storage | nindent 18 }}
