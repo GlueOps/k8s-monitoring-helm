@@ -68,6 +68,11 @@ spec:
             # https://grafana.{{ .Values.captain_domain }}/alerting/list
             # - Note: the captain domain does get replaced with the actual captain domain
             externalUrl: https://grafana.{{ .Values.captain_domain }}/alerting/list
+        # The chart's bundled Grafana is unused: grafana-admin / grafana-dev (app-grafana-admin.yaml, app-grafana-dev.yaml)
+        # are the exposed instances and read through Thanos Query. Disabling it also drops the chart's direct-to-Prometheus
+        # datasource and its default dashboard ConfigMaps (grafana_dashboard=1), which only this instance loaded.
+        grafana:
+          enabled: false
         defaultRules:
           disabled:
             KubePodNotReady: true
