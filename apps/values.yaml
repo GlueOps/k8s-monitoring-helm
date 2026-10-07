@@ -66,6 +66,8 @@ thanos:
   storegateway_sync_block_duration: ""
 
 loki:
+  # -- how long logs are kept (limits_config.retention_period). Must be a multiple of 24h.
+  retention_period: 360h
   # -- filled by the platform chart (`loki.storage`, from terraform `loki_storage`); empty for the same reason as thanos.storage.
   # https://grafana.com/docs/loki/latest/configure/#storage_config
   storage: {}

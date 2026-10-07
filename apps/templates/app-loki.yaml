@@ -79,12 +79,18 @@ spec:
                 max_streams_per_user: 100000
                 max_chunks_per_query: 100000
           limits_config:
+            # Applied by the compactor (loki-backend) once compactor.retention_enabled is true. Must be a multiple of
+            # 24h (the index period). Per-tenant overrides go in runtimeConfig.overrides.
+            retention_period: {{ .Values.loki.retention_period }}
             ingestion_rate_mb: 24      # Prevent high ingestion rates
             ingestion_burst_size_mb: 36
             query_timeout: 900s
             max_query_parallelism: 4    # Limit concurrent queries
             max_query_series: 10000     # Prevent large query memory spikes
             max_streams_per_user: 1000  # Restrict high memory-consuming logs
+          compactor:
+            retention_enabled: true
+            delete_request_store: s3   # required by Loki 3.x when retention is enabled
           server:
             http_server_read_timeout: 900s
             http_server_write_timeout: 900s
