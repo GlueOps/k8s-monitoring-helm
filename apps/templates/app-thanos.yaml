@@ -14,6 +14,7 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
     automated:
       prune: true
       selfHeal: true
@@ -53,7 +54,6 @@ spec:
                memory: 2024Mi
           dnsDiscovery:
             enabled: true
-            logLevel: debug
             sidecarsService: "glueops-core-kps-thanos-discovery"
             sidecarsNamespace: "glueops-core-monitoring"
         bucketweb:

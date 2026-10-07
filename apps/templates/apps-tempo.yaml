@@ -14,7 +14,7 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
-      - Replace=true
+      - ServerSideApply=true
     automated:
       prune: true
       selfHeal: true
@@ -106,7 +106,10 @@ spec:
               enabled: true
             grpc:
               enabled: true
-              max_recv_msg_size_mib: 8194305
+              # OTLP receiver default is 4MiB per message; the collector batches up to 2048 spans per request, which
+              # can exceed that with real span sizes -> Tempo rejects the whole batch (ResourceExhausted, not retried).
+              receiverConfig:
+                max_recv_msg_size_mib: 64
         
           
            
