@@ -118,7 +118,7 @@ otel:
   collector:
     repoURL: https://github.com/GlueOps/otel-resources-helm.git
     # TEST ONLY: GlueOps/otel-resources-helm fix/otlp-metrics-receiver — drop this commit before upstreaming.
-    targetRevision: 72df0b6f244863517a5e96d9ab1a84a12102e80c
+    targetRevision: 5b5b93fc9cbe82152229a52e29dccdff139518e0
     path: .
 
   manager:
