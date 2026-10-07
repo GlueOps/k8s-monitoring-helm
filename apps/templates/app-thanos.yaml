@@ -68,7 +68,7 @@ spec:
           # only a cache (everything lives in object storage).
           persistence:
             size: {{ .Values.thanos.compactor.disk_size }}
-          {{- if or (not .Values.thanos.compactor.downsampling_enabled) .Values.thanos.compactor.max_compaction_level }}
+          {{- if or (not .Values.thanos.compactor.downsampling_enabled) .Values.thanos.compactor.max_compaction_level .Values.thanos.compactor.dedup_enabled }}
           extraFlags:
             {{- if not .Values.thanos.compactor.downsampling_enabled }}
             # 5m/1h downsampled data only helps queries over ranges far longer than the retention we keep.
@@ -80,6 +80,14 @@ spec:
             # debug flag; the compactor logs a warning when it is below the default. 1h downsampling needs >=10d blocks,
             # so only cap the level when downsampling is disabled or 1h data isn't needed.
             - --debug.max-compaction-level={{ . }}
+            {{- end }}
+            {{- if .Values.thanos.compactor.dedup_enabled }}
+            # Offline dedup of the 2 HA Prometheus replicas (their blocks differ only by __replica__): merges them into
+            # one copy via vertical compaction (implied by this flag). penalty is required for HA replicas (the default
+            # one-to-one func only drops identical samples). Upstream marks this experimental; irreversible for merged
+            # blocks. Query-time dedup (query.replicaLabel) still applies to not-yet-merged data.
+            - --deduplication.replica-label=__replica__
+            - --deduplication.func=penalty
             {{- end }}
           {{- end }}
           resources:

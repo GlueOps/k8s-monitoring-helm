@@ -62,6 +62,9 @@ thanos:
     max_compaction_level: 3
     # -- compactor scratch disk; must fit the largest compaction (~2 days of blocks in + out at level 3)
     disk_size: 20Gi
+    # -- merge the two HA Prometheus replicas' blocks into one copy in the bucket (~halves storage). Experimental
+    # upstream and irreversible for merged blocks: back up / version the bucket before enabling on a cluster with history.
+    dedup_enabled: false
   # -- filled by the platform chart (platform-helm-chart-platform values `thanos.storage`, from terraform
   # `thanos_storage`). Deliberately empty: Helm map-merges values, so any default key here would leak into every
   # tenant's Thanos config. https://thanos.io/tip/thanos/storage.md/
