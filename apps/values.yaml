@@ -112,7 +112,7 @@ otel:
 
   collector:
     repoURL: https://github.com/GlueOps/otel-resources-helm.git
-    targetRevision: v0.1.0
+    targetRevision: v0.1.1
     path: .
 
   manager:
