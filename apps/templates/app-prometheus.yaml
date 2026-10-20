@@ -134,7 +134,7 @@ spec:
             retentionSize: {{ .Values.prometheus.retentionSize }}
             thanos:
               baseImage: quay.io/thanos/thanos
-              version: v0.38.0
+              version: v0.42.4
               objectStorageConfig:
                 secret: 
                 {{- toYaml .Values.thanos.storage | nindent 18 }}

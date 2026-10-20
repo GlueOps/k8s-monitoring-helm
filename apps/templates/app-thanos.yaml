@@ -25,51 +25,65 @@ spec:
         maxDuration: 3m0s
       limit: 5
   source:
-    repoURL: 'registry-1.docker.io/bitnamicharts'
+    repoURL: 'https://thanos-community.github.io/helm-charts'
     chart: thanos
-    targetRevision: 17.3.1
+    targetRevision: 0.47.2
     helm:
       skipCrds: true
       values: |-
-        objstoreConfig:
-        {{- toYaml .Values.thanos.storage | nindent 12 }}
         global:
-          security:
-            allowInsecureImages: true
-        image:
-          registry: ghcr.io
-          repository: glueops/mirror/bitnami/thanos
-        metrics:
-          enabled: true
+          # Pinned instead of following the chart's appVersion; keep in step with the sidecar
+          # (prometheusSpec.thanos.version in app-prometheus.yaml).
+          image:
+            registry: quay.io
+            repository: thanos/thanos
+            tag: v0.42.4
+          objstore:
+            createSecret: true
+            secretName: glueops-core-thanos-objstore
+            config: |
+            {{- toYaml .Values.thanos.storage | nindent 14 }}
           serviceMonitor:
             enabled: true
+          # Upstream thanos-mixin alerts (compactor halted / multiple compactors / store and query errors), picked up by
+          # the kps ruleSelector. Silence noisy ones with disabledAlerts rather than turning the group off.
+          thanosRules:
+            enabled: true
         query:
-          replicaLabel: ["__replica__"]
-          resources: 
+          replicaCount: 1
+          replicaLabels: ["__replica__"]
+          resources:
             requests:
               cpu: 2
               memory: 1024Mi
             limits:
                cpu: 3
                memory: 2024Mi
-          dnsDiscovery:
+          # The kps Thanos sidecars; the in-chart store gateway is added by endpoints.autogen.
+          endpoints:
+            static:
+              - dnssrv+_grpc._tcp.glueops-core-kps-thanos-discovery.glueops-core-monitoring.svc.cluster.local
+        bucket:
+          bucketweb:
             enabled: true
-            sidecarsService: "glueops-core-kps-thanos-discovery"
-            sidecarsNamespace: "glueops-core-monitoring"
-        bucketweb:
-          enabled: true
+        receive:
+          enabled: false
         compactor:
           enabled: true
-          retentionResolutionRaw: {{ .Values.thanos.compactor.retention_raw }}
-          retentionResolution5m: {{ .Values.thanos.compactor.retention_5m }}
-          retentionResolution1h: {{ .Values.thanos.compactor.retention_1h }}
+          retention:
+            resolutionRaw: {{ .Values.thanos.compactor.retention_raw }}
+            resolution5m: {{ .Values.thanos.compactor.retention_5m }}
+            resolution1h: {{ .Values.thanos.compactor.retention_1h }}
           # Scratch space: must hold the largest single compaction (all input blocks + the output block). Changing the
           # size needs the PVC deleted and recreated unless the storage class supports volume expansion; the data is
           # only a cache (everything lives in object storage).
           persistence:
             size: {{ .Values.thanos.compactor.disk_size }}
-          {{- if or (not .Values.thanos.compactor.downsampling_enabled) .Values.thanos.compactor.max_compaction_level .Values.thanos.compactor.dedup_enabled }}
-          extraFlags:
+          # Replaces the chart's default list, so its first three entries are repeated here.
+          extraArgs:
+            - --log.level=info
+            - --log.format=logfmt
+            - --consistency-delay=30m
             {{- if not .Values.thanos.compactor.downsampling_enabled }}
             # 5m/1h downsampled data only helps queries over ranges far longer than the retention we keep.
             - --downsampling.disable
@@ -85,11 +99,10 @@ spec:
             # Offline dedup of the 2 HA Prometheus replicas (their blocks differ only by __replica__): merges them into
             # one copy via vertical compaction (implied by this flag). penalty is required for HA replicas (the default
             # one-to-one func only drops identical samples). Upstream marks this experimental; irreversible for merged
-            # blocks. Query-time dedup (query.replicaLabel) still applies to not-yet-merged data.
+            # blocks. Query-time dedup (query.replicaLabels) still applies to not-yet-merged data.
             - --deduplication.replica-label=__replica__
             - --deduplication.func=penalty
             {{- end }}
-          {{- end }}
           resources:
             requests:
               cpu: 2
@@ -99,4 +112,8 @@ spec:
                memory: 2024Mi
         storegateway:
           enabled: true
-          useEndpointGroup: true
+          replicaCount: 1
+          # Delete + recreate instead of apply: StatefulSet serviceName and volumeClaimTemplates are immutable, and the
+          # move from the bitnami chart changed both. Safe because the store gateway's disk is only an index cache.
+          annotations:
+            argocd.argoproj.io/sync-options: Force=true,Replace=true
