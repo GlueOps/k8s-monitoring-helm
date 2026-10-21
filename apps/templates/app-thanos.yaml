@@ -24,6 +24,14 @@ spec:
         factor: 2
         maxDuration: 3m0s
       limit: 5
+  # The chart's volumeClaimTemplates have no apiVersion/kind; the API server adds them, so without this both
+  # StatefulSets stay OutOfSync forever (and selfHeal would keep force-replacing the store gateway).
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - .spec.volumeClaimTemplates[]?.apiVersion
+        - .spec.volumeClaimTemplates[]?.kind
   source:
     repoURL: 'https://thanos-community.github.io/helm-charts'
     chart: thanos
