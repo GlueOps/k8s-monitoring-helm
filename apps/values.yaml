@@ -118,7 +118,7 @@ otel:
   manager:
     image:
       repository: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator
-      tag: "0.152.0@sha256:3c80c1f39d15ec85a894d6ef2dfc19ce77c6050cd627b7cb071708ad67d441c0"
+      tag: "v0.157.0@sha256:ee06d35f92bf94ebeff9c26828385f98c53abcf5bbec920d8ab7ad859f0db341"
     collectorImage:
       repository: "otel/opentelemetry-collector-contrib"
       tag: 0.153.0@sha256:93aad750175cbf1a973ae1c5886c3371f4d800f61be25cdd26870b8441ffe9fa
