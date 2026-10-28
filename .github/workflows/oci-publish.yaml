@@ -1,0 +1,30 @@
+name: Publish Chart to GHCR (OCI)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish-oci:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Helm
+        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+
+      - name: Package and push chart to GHCR (OCI)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY_USER: ${{ github.actor }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          repo_path="$(echo "$REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          echo "$GITHUB_TOKEN" | helm registry login ghcr.io -u "$REGISTRY_USER" --password-stdin
+          helm package apps
+          helm push glueops-monitoring-*.tgz "oci://ghcr.io/${repo_path}"
+          helm registry logout ghcr.io
