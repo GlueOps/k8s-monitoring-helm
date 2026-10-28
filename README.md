@@ -48,4 +48,99 @@ instead of applying. Its disk is only an index cache. The compactor moved from a
 same name, so during that first sync the old and new compactor can briefly overlap; check that
 `ThanosCompactMultipleRunning` / `ThanosCompactHalted` (from the chart's PrometheusRule) are not firing afterwards.
 
+## Install
+
+```sh
+helm install glueops-monitoring oci://ghcr.io/glueops/k8s-monitoring-helm/glueops-monitoring --version 0.1.0
+```
+
+## Values
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| captain_domain | string | `"placeholder_captain_domain"` |  |
+| container_images.app_kube_prometheus_stack.grafana.image.registry | string | `"docker.io"` |  |
+| container_images.app_kube_prometheus_stack.grafana.image.repository | string | `"grafana/grafana"` |  |
+| container_images.app_kube_prometheus_stack.grafana.image.tag | string | `"13.0.1-security-01@sha256:2d1f9ae67c1778d33e291d4c3c759cd8b650e67491f02533499eb950e075eeb5"` |  |
+| container_images.app_loki_alert_group_controller.loki_alert_group_controller.image.registry | string | `"ghcr.io"` |  |
+| container_images.app_loki_alert_group_controller.loki_alert_group_controller.image.repository | string | `"glueops/metacontroller-operator-loki-rule-group"` |  |
+| container_images.app_loki_alert_group_controller.loki_alert_group_controller.image.tag | string | `"50357243c2743adda4a4477888a1ea89cd9c0a9c@sha256:edf1ab4162db842452257540c9f5a20b4b79c9aaf78523e019f10f3a9338d038"` |  |
+| dex.grafana.client_secret | string | `"placeholder_dex_grafana_client_secret"` | Specify a unique password here. This will be used to connect grafana via OAuth to the Dex IDP. You can create one with in bash `openssl rand -base64 32` |
+| glueops_node_and_tolerations.nodeSelector."glueops.dev/role" | string | `"glueops-platform"` |  |
+| glueops_node_and_tolerations.tolerations[0].effect | string | `"NoSchedule"` |  |
+| glueops_node_and_tolerations.tolerations[0].key | string | `"glueops.dev/role"` |  |
+| glueops_node_and_tolerations.tolerations[0].operator | string | `"Equal"` |  |
+| glueops_node_and_tolerations.tolerations[0].value | string | `"glueops-platform"` |  |
+| grafana.admin_password | string | `"placeholder_grafana_admin_password"` | Default admin password. CHANGE THIS!!!! |
+| grafana.github_other_org_names | string | `"placeholder_tenant_github_org_name"` |  |
+| host_network.cert_manager.webhook_secure_port | int | `45020` |  |
+| host_network.enabled | bool | `true` |  |
+| host_network.external_secrets.webhook_port | int | `45010` |  |
+| host_network.kube_pometheus_stack.prometheusOperator.admissionWebhooks.deployment.tls.internal_port | int | `45041` |  |
+| host_network.kube_pometheus_stack.prometheusOperator.tls.internal_port | int | `45040` |  |
+| host_network.nginx_public.controller.host_port.ports.http | int | `45030` |  |
+| host_network.nginx_public.controller.host_port.ports.https | int | `45031` |  |
+| loki.chunkConfig.allocatedMemory | int | `2024` |  |
+| loki.chunkConfig.batchSize | int | `2` |  |
+| loki.chunkConfig.maxItemMemory | int | `2` |  |
+| loki.chunkConfig.parallelism | int | `2` |  |
+| loki.chunkConfig.replicas | int | `2` |  |
+| loki.chunkConfig.writebackBuffer | int | `1000` |  |
+| loki.chunkConfig.writebackParallelism | int | `1` |  |
+| loki.chunkConfig.writebackSizeLimit | string | `"500MB"` |  |
+| loki.retention_period | string | `"360h"` | how long logs are kept (limits_config.retention_period). Must be a multiple of 24h. |
+| loki.storage | object | `{}` | filled by the platform chart (`loki.storage`, from terraform `loki_storage`); empty for the same reason as thanos.storage. https://grafana.com/docs/loki/latest/configure/#storage_config |
+| otel.collector.path | string | `"."` |  |
+| otel.collector.repoURL | string | `"https://github.com/GlueOps/otel-resources-helm.git"` |  |
+| otel.collector.targetRevision | string | `"fix/spanmetrics-limit-component-names"` |  |
+| otel.config | string | `nil` |  |
+| otel.manager.autoInstrumentationImage.apacheHttpd.repository | string | `""` |  |
+| otel.manager.autoInstrumentationImage.apacheHttpd.tag | string | `""` |  |
+| otel.manager.autoInstrumentationImage.dotnet.repository | string | `""` |  |
+| otel.manager.autoInstrumentationImage.dotnet.tag | string | `""` |  |
+| otel.manager.autoInstrumentationImage.go.repository | string | `""` |  |
+| otel.manager.autoInstrumentationImage.go.tag | string | `""` |  |
+| otel.manager.autoInstrumentationImage.java.repository | string | `"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java"` |  |
+| otel.manager.autoInstrumentationImage.java.tag | string | `"2.7.0"` |  |
+| otel.manager.autoInstrumentationImage.nodejs.repository | string | `"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs"` |  |
+| otel.manager.autoInstrumentationImage.nodejs.tag | string | `"0.52.1"` |  |
+| otel.manager.autoInstrumentationImage.python.repository | string | `"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python"` |  |
+| otel.manager.autoInstrumentationImage.python.tag | string | `"0.47b0"` |  |
+| otel.manager.collectorImage.repository | string | `"otel/opentelemetry-collector-contrib"` |  |
+| otel.manager.collectorImage.tag | string | `"0.153.0@sha256:93aad750175cbf1a973ae1c5886c3371f4d800f61be25cdd26870b8441ffe9fa"` |  |
+| otel.manager.image.repository | string | `"ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator"` |  |
+| otel.manager.image.tag | string | `"0.152.0@sha256:3c80c1f39d15ec85a894d6ef2dfc19ce77c6050cd627b7cb071708ad67d441c0"` |  |
+| otel.manager.opampBridgeImage.repository | string | `""` |  |
+| otel.manager.opampBridgeImage.tag | string | `""` |  |
+| otel.manager.resources.limits.cpu | string | `"100m"` |  |
+| otel.manager.resources.limits.memory | string | `"128Mi"` |  |
+| otel.manager.resources.requests.cpu | string | `"100m"` |  |
+| otel.manager.resources.requests.memory | string | `"64Mi"` |  |
+| otel.manager.targetAllocatorImage.repository | string | `""` |  |
+| otel.manager.targetAllocatorImage.tag | string | `""` |  |
+| otel.replicas | int | `1` |  |
+| prometheus.alertmanager_log_level | string | `"info"` |  |
+| prometheus.kube_api_server | bool | `true` |  |
+| prometheus.kube_controller_manager | bool | `false` |  |
+| prometheus.kube_proxy | bool | `false` |  |
+| prometheus.kube_scheduler | bool | `false` |  |
+| prometheus.kube_state_metric | bool | `true` |  |
+| prometheus.kubelet | bool | `true` |  |
+| prometheus.node_exporter | bool | `true` |  |
+| prometheus.retention | string | `"1d"` |  |
+| prometheus.retentionSize | string | `"10GB"` |  |
+| prometheus.service_monitor | bool | `false` |  |
+| prometheus.volume_claim_storage_request | string | `"50"` | Volume of storage requested for each Prometheus PVC, in Gi |
+| tempo.compaction_block_retention | string | `"168h"` |  |
+| tempo.remote_url[0] | string | `"http://localhost:9090/api/v1/write"` |  |
+| tempo.storage | object | `{}` | filled by the platform chart (`tempo.storage`, from terraform `tempo_storage`); empty for the same reason as thanos.storage. https://grafana.com/docs/tempo/latest/configuration/#storage |
+| thanos.compactor.dedup_enabled | bool | `false` | merge the two HA Prometheus replicas' blocks into one copy in the bucket (~halves storage). Experimental upstream and irreversible for merged blocks: back up / version the bucket before enabling on a cluster with history. |
+| thanos.compactor.disk_size | string | `"20Gi"` | compactor scratch disk; must fit the largest compaction (~2 days of blocks in + out at level 3) |
+| thanos.compactor.downsampling_enabled | bool | `false` | create 5m/1h downsampled blocks (needed for long-range queries over months/years) |
+| thanos.compactor.max_compaction_level | int | `3` | max compaction level (3 = 2-day blocks; empty = Thanos default 4 = 14-day blocks, required for 1h downsampling) |
+| thanos.compactor.retention_1h | string | `"15d"` |  |
+| thanos.compactor.retention_5m | string | `"15d"` |  |
+| thanos.compactor.retention_raw | string | `"15d"` | raw / 5m / 1h retention in the bucket. With downsampling disabled no 5m/1h blocks are created; keep their retention equal to raw so any existing downsampled blocks are cleaned up too ("0d" would mean keep forever). |
+| thanos.storage | object | `{}` | filled by the platform chart (platform-helm-chart-platform values `thanos.storage`, from terraform `thanos_storage`). Deliberately empty: Helm map-merges values, so any default key here would leak into every tenant's Thanos config. https://thanos.io/tip/thanos/storage.md/ |
+
 Managed by github-org-manager
