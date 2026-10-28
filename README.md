@@ -18,7 +18,7 @@ before the platform chart. No Application in `apps/` may render a CRD:
 | `glueops-core-otel` | opentelemetry-operator | `helm.skipCrds: true` **and** `crds.create: false` — this chart renders its CRDs as templates, so `skipCrds` alone is not enough |
 | `glueops-core-loki` | loki | `helm.skipCrds: true` (its rollout-operator / grafana-agent-operator subcharts ship `crds/` and are disabled) |
 | `glueops-core-tempo` | tempo-distributed | `helm.skipCrds: true` |
-| `glueops-core-thanos`, `glueops-core-grafana-admin`, `glueops-core-grafana-dev` | thanos, grafana | `helm.skipCrds: true` (no CRDs upstream) |
+| `glueops-core-thanos`, `glueops-core-grafana-admin`, `glueops-core-grafana-dev` | thanos (thanos-community), grafana | `helm.skipCrds: true` (no CRDs upstream; the thanos chart's optional kube-prometheus-stack subchart stays disabled) |
 | `glueops-core-grafana-dashboards` | GlueOps/platform-helm-chart-grafana-dashboards (git) | `helm.skipCrds: true` (no CRDs upstream) |
 | `glueops-core-loki-alert-group-controller` | app | ships only the `CompositeController`; the `LokiAlertRuleGroup` CRD is in the bundle |
 | `glueops-core-alerts`, `glueops-core-otel-collector` | app, GlueOps/otel-resources-helm (git) | plain custom resources only, nothing to suppress |
@@ -35,5 +35,17 @@ independently of the chart's `appVersion`), so the bundle pin must track that ta
 Note: the bundle serves `OpenTelemetryCollector` **only as `v1beta1`** (the upstream `v1alpha1` needs the operator's
 conversion webhook, which the bundle cannot carry). Everything deployed from `GlueOps/otel-resources-helm` is
 `v1beta1`.
+
+## Thanos
+
+`glueops-core-thanos` uses the [thanos-community chart](https://github.com/thanos-community/helm-charts) (the bitnami
+chart is frozen at Thanos 0.39.2). The Thanos image tag is pinned in `app-thanos.yaml` (`global.image.tag`); bump it
+together with the Prometheus sidecar (`prometheusSpec.thanos.version` in `app-prometheus.yaml`).
+
+The store gateway StatefulSet carries `argocd.argoproj.io/sync-options: Force=true,Replace=true`: the move from the
+bitnami chart changed its immutable `serviceName` and `volumeClaimTemplates`, so Argo CD deletes and recreates it
+instead of applying. Its disk is only an index cache. The compactor moved from a Deployment to a StatefulSet of the
+same name, so during that first sync the old and new compactor can briefly overlap; check that
+`ThanosCompactMultipleRunning` / `ThanosCompactHalted` (from the chart's PrometheusRule) are not firing afterwards.
 
 Managed by github-org-manager
