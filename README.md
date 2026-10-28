@@ -96,7 +96,7 @@ helm pull oci://ghcr.io/glueops/k8s-monitoring-helm/glueops-monitoring --version
 | loki.storage | object | `{}` | filled by the platform chart (`loki.storage`, from terraform `loki_storage`); empty for the same reason as thanos.storage. https://grafana.com/docs/loki/latest/configure/#storage_config |
 | otel.collector.path | string | `"."` |  |
 | otel.collector.repoURL | string | `"https://github.com/GlueOps/otel-resources-helm.git"` |  |
-| otel.collector.targetRevision | string | `"fix/spanmetrics-limit-component-names"` |  |
+| otel.collector.targetRevision | string | `"main"` |  |
 | otel.config | string | `nil` |  |
 | otel.manager.autoInstrumentationImage.apacheHttpd.repository | string | `""` |  |
 | otel.manager.autoInstrumentationImage.apacheHttpd.tag | string | `""` |  |
@@ -111,7 +111,7 @@ helm pull oci://ghcr.io/glueops/k8s-monitoring-helm/glueops-monitoring --version
 | otel.manager.autoInstrumentationImage.python.repository | string | `"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python"` |  |
 | otel.manager.autoInstrumentationImage.python.tag | string | `"0.47b0"` |  |
 | otel.manager.collectorImage.repository | string | `"otel/opentelemetry-collector-contrib"` |  |
-| otel.manager.collectorImage.tag | string | `"0.153.0@sha256:93aad750175cbf1a973ae1c5886c3371f4d800f61be25cdd26870b8441ffe9fa"` |  |
+| otel.manager.collectorImage.tag | string | `"0.154.0@sha256:b3079f45e19bdb7326bf49cdddce6cf60dfd865138db39f2733ea48ab17bc4cb"` |  |
 | otel.manager.image.repository | string | `"ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator"` |  |
 | otel.manager.image.tag | string | `"0.152.0@sha256:3c80c1f39d15ec85a894d6ef2dfc19ce77c6050cd627b7cb071708ad67d441c0"` |  |
 | otel.manager.opampBridgeImage.repository | string | `""` |  |
