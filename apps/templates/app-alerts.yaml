@@ -127,6 +127,27 @@ spec:
                   labels:
                     alertname: glueops-core-alerts
                     namespace: glueops-core-alerts
+          - |-
+            apiVersion: monitoring.coreos.com/v1
+            kind: PrometheusRule
+            metadata:
+              name: glueops-spanmetrics-overflow
+            spec:
+              groups:
+              - name: glueops-spanmetrics-overflow
+                rules:
+                # The collector's span_metrics connector folds combinations past aggregation_cardinality_limit into one
+                # series that only carries otel_metric_overflow="true" (no span_name, status_code, http_* labels), so the
+                # APM dashboards undercount for that service. The overflow series has no service_name label; the service
+                # is in job (set from service.name by prometheusremotewrite).
+                - alert: glueops-spanmetrics-overflow
+                  expr: sum by (job) (rate(span_metrics_calls_total{otel_metric_overflow="true"}[5m])) > 0
+                  for: 15m
+                  annotations:
+                    description: Span metrics for a service are over the collector's cardinality limit; new route/status/IP combinations lose their labels.
+                  labels:
+                    alertname: glueops-core-alerts
+                    namespace: glueops-core-alerts
           # - |-
           #   apiVersion: metacontroller.glueops.dev/v1alpha1
           #   kind: LokiAlertRuleGroup
