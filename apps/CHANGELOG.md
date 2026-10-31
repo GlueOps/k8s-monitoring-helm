@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.0](https://github.com/GlueOps/k8s-monitoring-helm/compare/v0.1.0...v0.2.0) (2026-10-31)
+
+
+### Features
+
+* **otel:** use the operator's default auto-instrumentation images via the ghcr mirror ([#398](https://github.com/GlueOps/k8s-monitoring-helm/issues/398)) ([34e12c0](https://github.com/GlueOps/k8s-monitoring-helm/commit/34e12c00b80702adb72c179ec9079b747ccba506))
+
+
+### Bug Fixes
+
+* point to main again ([f60a00a](https://github.com/GlueOps/k8s-monitoring-helm/commit/f60a00a19483ea1c0e3298e52c6a7f1f39e81930))
+* pointing to stable branch ([366ff32](https://github.com/GlueOps/k8s-monitoring-helm/commit/366ff32e020a8680b6ec96d623a8d41454779ef6))
+
 ## [0.1.0](https://github.com/GlueOps/k8s-monitoring-helm/compare/v0.0.1...v0.1.0) (2026-10-28)
 
 

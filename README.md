@@ -57,7 +57,7 @@ Each release is also published as an OCI chart. The platform chart deploys it wi
 Argo CD Applications, so a manual install needs Argo CD's namespace, the `glueops-core` AppProject and those values:
 
 ```sh
-helm pull oci://ghcr.io/glueops/k8s-monitoring-helm/glueops-monitoring --version 0.1.0
+helm pull oci://ghcr.io/glueops/k8s-monitoring-helm/glueops-monitoring --version 0.2.0
 ```
 
 ## Values
