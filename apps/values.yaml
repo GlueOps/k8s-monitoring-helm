@@ -121,7 +121,7 @@ otel:
       tag: "0.152.0@sha256:3c80c1f39d15ec85a894d6ef2dfc19ce77c6050cd627b7cb071708ad67d441c0"
     collectorImage:
       repository: "otel/opentelemetry-collector-contrib"
-      tag: 0.157.0@sha256:f2f01157055a9b2aab9df7118e1f1c9abf345e99b23bc7a2bc791db374a7d0f6
+      tag: 0.164.0@sha256:340c9ca6a36617084c6661bdc4f0fe92b7cda5a805d61673ec8db375fddc522b
     opampBridgeImage:
       repository: ""
       tag: ""
