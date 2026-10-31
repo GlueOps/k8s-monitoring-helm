@@ -31,7 +31,9 @@ When you bump kube-prometheus-stack (`app-prometheus.yaml` `targetRevision`) or 
 matching pin in `platform-crds` first (`glueops.dev/pin.kube-prometheus-stack`, `glueops.dev/pin.opentelemetry-operator`):
 a CRD older than the operator that serves it rejects fields the operator writes. The operator version that matters is
 the **image** actually running, `otel.manager.image.tag` in `apps/values.yaml` (renovate bumps that tag on its own,
-independently of the chart's `appVersion`), so the bundle pin must track that tag.
+independently of the chart's `appVersion`), so the bundle pin must track that tag. The same bump must also move
+`otel.manager.autoInstrumentationImage.*` to the new tag's `versions.txt`, keeping the `ghcr.repo.gpkg.io` mirror and
+the digests: on restart the operator rewrites every `Instrumentation` still on the old default to the new one.
 
 Note: the bundle serves `OpenTelemetryCollector` **only as `v1beta1`** (the upstream `v1alpha1` needs the operator's
 conversion webhook, which the bundle cannot carry). Everything deployed from `GlueOps/otel-resources-helm` is
@@ -96,20 +98,22 @@ helm pull oci://ghcr.io/glueops/k8s-monitoring-helm/glueops-monitoring --version
 | loki.storage | object | `{}` | filled by the platform chart (`loki.storage`, from terraform `loki_storage`); empty for the same reason as thanos.storage. https://grafana.com/docs/loki/latest/configure/#storage_config |
 | otel.collector.path | string | `"."` |  |
 | otel.collector.repoURL | string | `"https://github.com/GlueOps/otel-resources-helm.git"` |  |
-| otel.collector.targetRevision | string | `"test/issue-527-all"` |  |
+| otel.collector.targetRevision | string | `"main"` |  |
 | otel.config | string | `nil` |  |
-| otel.manager.autoInstrumentationImage.apacheHttpd.repository | string | `""` |  |
-| otel.manager.autoInstrumentationImage.apacheHttpd.tag | string | `""` |  |
-| otel.manager.autoInstrumentationImage.dotnet.repository | string | `""` |  |
-| otel.manager.autoInstrumentationImage.dotnet.tag | string | `""` |  |
-| otel.manager.autoInstrumentationImage.go.repository | string | `""` |  |
-| otel.manager.autoInstrumentationImage.go.tag | string | `""` |  |
-| otel.manager.autoInstrumentationImage.java.repository | string | `"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java"` |  |
-| otel.manager.autoInstrumentationImage.java.tag | string | `"2.7.0"` |  |
-| otel.manager.autoInstrumentationImage.nodejs.repository | string | `"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs"` |  |
-| otel.manager.autoInstrumentationImage.nodejs.tag | string | `"0.52.1"` |  |
-| otel.manager.autoInstrumentationImage.python.repository | string | `"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python"` |  |
-| otel.manager.autoInstrumentationImage.python.tag | string | `"0.47b0"` |  |
+| otel.manager.autoInstrumentationImage.apacheHttpd.repository | string | `"ghcr.repo.gpkg.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd"` |  |
+| otel.manager.autoInstrumentationImage.apacheHttpd.tag | string | `"1.0.4@sha256:97ccd0c314b641ed36208502fb78490a030677c4923b03a0841d60ed01727081"` |  |
+| otel.manager.autoInstrumentationImage.dotnet.repository | string | `"ghcr.repo.gpkg.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet"` |  |
+| otel.manager.autoInstrumentationImage.dotnet.tag | string | `"1.15.0@sha256:93bd2314f6407d00f462fcd4220211ecfecb31d09a8b46a979dbdb287a8eee66"` |  |
+| otel.manager.autoInstrumentationImage.go.repository | string | `"ghcr.repo.gpkg.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go"` |  |
+| otel.manager.autoInstrumentationImage.go.tag | string | `"v0.24.0@sha256:664715c04cb854ffdbb920ea1289a86b0717f39e46b18e6584caa9e1f2e4d83f"` |  |
+| otel.manager.autoInstrumentationImage.java.repository | string | `"ghcr.repo.gpkg.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java"` |  |
+| otel.manager.autoInstrumentationImage.java.tag | string | `"2.28.1@sha256:41b92978e61d13d4f32c6eb20c6ae7821a73ffdec8539bc6a73858e884b411d8"` |  |
+| otel.manager.autoInstrumentationImage.nginx.repository | string | `"ghcr.repo.gpkg.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd"` |  |
+| otel.manager.autoInstrumentationImage.nginx.tag | string | `"1.0.4@sha256:97ccd0c314b641ed36208502fb78490a030677c4923b03a0841d60ed01727081"` |  |
+| otel.manager.autoInstrumentationImage.nodejs.repository | string | `"ghcr.repo.gpkg.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs"` |  |
+| otel.manager.autoInstrumentationImage.nodejs.tag | string | `"0.76.0@sha256:ff253cd68f96e372c9925b1dc369ff6d0e1dcd94b8629ddbb47e5dc011b245ad"` |  |
+| otel.manager.autoInstrumentationImage.python.repository | string | `"ghcr.repo.gpkg.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python"` |  |
+| otel.manager.autoInstrumentationImage.python.tag | string | `"0.63b1@sha256:b3921dc289d7040259cca76faa6e53c6712e21c146377d1c9980ce5704e32445"` |  |
 | otel.manager.collectorImage.repository | string | `"otel/opentelemetry-collector-contrib"` |  |
 | otel.manager.collectorImage.tag | string | `"0.157.0@sha256:f2f01157055a9b2aab9df7118e1f1c9abf345e99b23bc7a2bc791db374a7d0f6"` |  |
 | otel.manager.image.repository | string | `"ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator"` |  |
