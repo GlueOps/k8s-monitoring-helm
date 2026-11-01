@@ -36,7 +36,7 @@ independently of the chart's `appVersion`), so the bundle pin must track that ta
 the digests: on restart the operator rewrites every `Instrumentation` still on the old default to the new one, and a
 developer's tag-only pin is safe only because it differs from these digest defaults. The platform's `default-unpinned`
 Instrumentation pins its own agent images (GlueOps/otel-resources-helm `instrumentation.images`), so this bump does not
-change them.
+change them: bump those separately to the same `versions.txt` (tag only), after reading the agents' release notes.
 
 Note: the bundle serves `OpenTelemetryCollector` **only as `v1beta1`** (the upstream `v1alpha1` needs the operator's
 conversion webhook, which the bundle cannot carry). Everything deployed from `GlueOps/otel-resources-helm` is
