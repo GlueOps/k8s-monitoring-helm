@@ -140,6 +140,13 @@ helm pull oci://ghcr.io/glueops/k8s-monitoring-helm/glueops-monitoring --version
 | prometheus.service_monitor | bool | `false` |  |
 | prometheus.volume_claim_storage_request | string | `"50"` | Volume of storage requested for each Prometheus PVC, in Gi |
 | tempo.compaction_block_retention | string | `"168h"` |  |
+| tempo.kafka.heapOpts | string | `"-Xms1g -Xmx1g"` | JVM heap; keep it under the memory limit, the rest is page cache |
+| tempo.kafka.image | string | `"docker.io/apache/kafka:4.3.2@sha256:852a0d49fc4e656b022e7f23785411802c9a088c78a7c5e39f33969de9c227a7"` | broker image (KRaft, broker and controller in one process) |
+| tempo.kafka.partitions | int | `3` | partitions of the tempo-traces topic; block-builder and live-store run one replica per partition |
+| tempo.kafka.resources | object | `{"limits":{"memory":"2Gi"},"requests":{"cpu":"250m","memory":"1536Mi"}}` | broker container resources |
+| tempo.kafka.retentionBytesPerPartition | int | `2147483648` | per-partition byte cap; partitions x this must stay below sizeLimit |
+| tempo.kafka.retentionHours | int | `6` | how long the broker keeps spans; only matters while block-builders are down |
+| tempo.kafka.sizeLimit | string | `"10Gi"` | emptyDir sizeLimit of the broker's log dir (node ephemeral storage); the kubelet evicts the pod past it |
 | tempo.remote_url[0] | string | `"http://localhost:9090/api/v1/write"` |  |
 | tempo.storage | object | `{}` | filled by the platform chart (`tempo.storage`, from terraform `tempo_storage`); empty for the same reason as thanos.storage. https://grafana.com/docs/tempo/latest/configuration/#storage |
 | thanos.compactor.dedup_enabled | bool | `false` | merge the two HA Prometheus replicas' blocks into one copy in the bucket (~halves storage). Experimental upstream and irreversible for merged blocks: back up / version the bucket before enabling on a cluster with history. |
