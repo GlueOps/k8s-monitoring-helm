@@ -180,6 +180,29 @@ tempo:
 
   compaction_block_retention: "168h"
 
+  # Single-broker Kafka (Deployment + emptyDir) that buffers spans between the Tempo 3 distributors and the
+  # block-builders/live-stores. Nothing in it outlives a block-builder cycle, so it has no PVC.
+  kafka:
+    # -- broker image (KRaft, broker and controller in one process)
+    image: docker.io/apache/kafka:4.3.2@sha256:852a0d49fc4e656b022e7f23785411802c9a088c78a7c5e39f33969de9c227a7
+    # -- partitions of the tempo-traces topic; block-builder and live-store run one replica per partition
+    partitions: 3
+    # -- how long the broker keeps spans; only matters while block-builders are down
+    retentionHours: 6
+    # -- per-partition byte cap; partitions x this must stay below sizeLimit
+    retentionBytesPerPartition: 2147483648
+    # -- emptyDir sizeLimit of the broker's log dir (node ephemeral storage); the kubelet evicts the pod past it
+    sizeLimit: 10Gi
+    # -- JVM heap; keep it under the memory limit, the rest is page cache
+    heapOpts: "-Xms1g -Xmx1g"
+    # -- broker container resources
+    resources:
+      requests:
+        cpu: 250m
+        memory: 1536Mi
+      limits:
+        memory: 2Gi
+
 grafana:
   # @ignored
   github_admin_org_name: placeholder_admin_github_org_name   # previously: glueops-rocks

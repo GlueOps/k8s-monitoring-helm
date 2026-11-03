@@ -27,7 +27,7 @@ spec:
   source:
     repoURL: 'https://grafana-community.github.io/helm-charts'
     chart: tempo-distributed
-    targetRevision: 2.25.5
+    targetRevision: 3.21.0
     helm:
       skipCrds: true
       values: |-
@@ -41,10 +41,10 @@ spec:
               rate_limit_bytes: 50000000
               max_traces_per_user: 10000000
             metrics_generator:
+              # local-blocks is gone in Tempo 3: the live-store serves recent TraceQL metrics.
               processors:
                 - service-graphs
                 - span-metrics
-                - local-blocks
             global:
               max_bytes_per_trace: 10000000
         metricsGenerator:
@@ -59,42 +59,46 @@ spec:
                 max_items: 10000
                 wait: 10s
                 workers: 10
-              
+
             registry:
               collection_interval: 30s
             storage:
               # Remote-write to Prometheus/OSD/etc. Update the URL.
               remote_write:
                 - url: http://glueops-core-kps-prometheus.glueops-core-monitoring:9090/api/v1/write
-                
-        compactor:
+
+        # Tempo 3 write path: distributor -> Kafka -> block-builder (blocks to object storage) and live-store (recent
+        # data). The ingester and compactor are gone; compaction and retention run in backend-scheduler/backend-worker.
+        # https://grafana.com/docs/tempo/latest/introduction/architecture/
+        ingest:
+          kafka:
+            address: glueops-core-tempo-kafka.glueops-core-monitoring.svc.cluster.local:9092
+            topic: tempo-traces
+            auto_create_topic_enabled: true
+            # block-builder and live-store run one replica per partition.
+            auto_create_topic_default_partitions: {{ .Values.tempo.kafka.partitions }}
+        blockBuilder:
+          replicas: {{ .Values.tempo.kafka.partitions }}
+        liveStore:
+          replicas: {{ .Values.tempo.kafka.partitions }}
+        backendScheduler:
           config:
-            compaction:
-             block_retention: {{ .Values.tempo.compaction_block_retention}}
+            provider:
+              compaction:
+                compaction:
+                  block_retention: {{ .Values.tempo.compaction_block_retention }}
         multitenancyEnabled: true
-        
+
         gateway:
           enabled: true
         metaMonitoring:
           serviceMonitor:
-            enabled: true  
-        ingester:  
-          config:
-            flush_check_period: 10s
-            flush_all_on_shutdown: true
-            # complete_block_timeout is deliberately not set: Tempo's default (15m = 3x the default 5m blocklist_poll)
-            # keeps a flushed block on the ingesters until queriers have polled it (up to 2x blocklist_poll) and until
-            # its traces are older than query_frontend.search.query_backend_after (15m). Lower values make recent traces
-            # 404 by ID and disappear from search. https://grafana.com/docs/tempo/latest/configuration/polling/
-            max_block_bytes: 524288000
-            max_bytes_per_trace: 40000000
-            
-            trace_idle_period: 10s
+            enabled: true
         server:
             grpc_server_max_recv_msg_size: 81194305
             grpc_server_max_send_msg_size: 81194305
         storage:
-          trace: 
+          trace:
           {{- toYaml .Values.tempo.storage | nindent 12 }}
         traces:
           otlp:
@@ -106,10 +110,129 @@ spec:
               # can exceed that with real span sizes -> Tempo rejects the whole batch (ResourceExhausted, not retried).
               receiverConfig:
                 max_recv_msg_size_mib: 64
-        
-          
-           
-        
-                    
 
-        
+        # The chart needs an external Kafka-compatible broker. This one is a single KRaft broker (broker + controller in
+        # one process) as a Deployment on an emptyDir: Kafka only buffers spans until the block-builders have written
+        # them to object storage, so it keeps no state worth a PVC. A restart or reschedule of the broker pod loses the
+        # spans not yet in a block (up to one block-builder cycle) and the topic is re-created on the next write.
+        extraObjects:
+          - apiVersion: v1
+            kind: Service
+            metadata:
+              name: glueops-core-tempo-kafka
+              labels:
+                app.kubernetes.io/name: tempo-kafka
+                app.kubernetes.io/instance: glueops-core-tempo
+            spec:
+              selector:
+                app.kubernetes.io/name: tempo-kafka
+                app.kubernetes.io/instance: glueops-core-tempo
+              ports:
+                - name: kafka
+                  port: 9092
+                  targetPort: kafka
+          - apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: glueops-core-tempo-kafka
+              labels:
+                app.kubernetes.io/name: tempo-kafka
+                app.kubernetes.io/instance: glueops-core-tempo
+            spec:
+              replicas: 1
+              # Two brokers with the same node ID must never run at once.
+              strategy:
+                type: Recreate
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: tempo-kafka
+                  app.kubernetes.io/instance: glueops-core-tempo
+              template:
+                metadata:
+                  labels:
+                    app.kubernetes.io/name: tempo-kafka
+                    app.kubernetes.io/instance: glueops-core-tempo
+                spec:
+                  # Service links would inject *_PORT variables; the image turns every KAFKA_* variable into a setting.
+                  enableServiceLinks: false
+                  securityContext:
+                    runAsNonRoot: true
+                    runAsUser: 1000
+                    runAsGroup: 1000
+                    seccompProfile:
+                      type: RuntimeDefault
+                  containers:
+                    - name: kafka
+                      image: {{ .Values.tempo.kafka.image }}
+                      ports:
+                        - name: kafka
+                          containerPort: 9092
+                        - name: controller
+                          containerPort: 9093
+                      env:
+                        - name: CLUSTER_ID
+                          value: stB_kXc2TZaDg5Rm6oxbaQ
+                        - name: KAFKA_NODE_ID
+                          value: "1"
+                        - name: KAFKA_PROCESS_ROLES
+                          value: broker,controller
+                        - name: KAFKA_LISTENERS
+                          value: PLAINTEXT://:9092,CONTROLLER://:9093
+                        - name: KAFKA_ADVERTISED_LISTENERS
+                          value: PLAINTEXT://glueops-core-tempo-kafka.glueops-core-monitoring.svc.cluster.local:9092
+                        - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+                          value: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+                        - name: KAFKA_CONTROLLER_LISTENER_NAMES
+                          value: CONTROLLER
+                        - name: KAFKA_INTER_BROKER_LISTENER_NAME
+                          value: PLAINTEXT
+                        - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+                          value: 1@localhost:9093
+                        - name: KAFKA_LOG_DIRS
+                          value: /var/lib/kafka/data
+                        - name: KAFKA_NUM_PARTITIONS
+                          value: {{ .Values.tempo.kafka.partitions | quote }}
+                        - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+                          value: "1"
+                        - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+                          value: "1"
+                        - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
+                          value: "1"
+                        - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
+                          value: "0"
+                        # Tempo's producer sends record batches of up to 16,000,000 bytes (pkg/ingest); the broker
+                        # default (1 MiB) would reject them.
+                        - name: KAFKA_MESSAGE_MAX_BYTES
+                          value: "16777216"
+                        # Retention only has to cover block-builder downtime; the byte cap is per partition and keeps
+                        # the log dir under the emptyDir sizeLimit (the kubelet evicts the pod past it).
+                        - name: KAFKA_LOG_RETENTION_HOURS
+                          value: {{ .Values.tempo.kafka.retentionHours | quote }}
+                        - name: KAFKA_LOG_RETENTION_BYTES
+                          value: {{ .Values.tempo.kafka.retentionBytesPerPartition | int64 | quote }}
+                        - name: KAFKA_LOG_SEGMENT_BYTES
+                          value: "268435456"
+                        - name: KAFKA_HEAP_OPTS
+                          value: {{ .Values.tempo.kafka.heapOpts | quote }}
+                      readinessProbe:
+                        tcpSocket:
+                          port: kafka
+                        periodSeconds: 10
+                      livenessProbe:
+                        tcpSocket:
+                          port: kafka
+                        initialDelaySeconds: 60
+                        periodSeconds: 20
+                      resources:
+                        {{- toYaml .Values.tempo.kafka.resources | nindent 24 }}
+                      securityContext:
+                        allowPrivilegeEscalation: false
+                        capabilities:
+                          drop: ["ALL"]
+                      volumeMounts:
+                        - name: data
+                          mountPath: /var/lib/kafka/data
+                  volumes:
+                    - name: data
+                      emptyDir:
+                        sizeLimit: {{ .Values.tempo.kafka.sizeLimit }}
