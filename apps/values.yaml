@@ -195,13 +195,61 @@ tempo:
     sizeLimit: 10Gi
     # -- JVM heap; keep it under the memory limit, the rest is page cache
     heapOpts: "-Xms1g -Xmx1g"
-    # -- broker container resources
+    # -- broker container resources. The ephemeral-storage request (keep it equal to sizeLimit) makes the scheduler
+    # place the broker on a node with room for its log dir instead of one that DiskPressure-evicts it.
     resources:
       requests:
         cpu: 250m
         memory: 1536Mi
+        ephemeral-storage: 10Gi
       limits:
         memory: 2Gi
+    # -- seconds the broker stays bound to a NotReady/unreachable node before it is evicted and rescheduled (k8s default 300)
+    nodeFailureTolerationSeconds: 30
+    # -- PriorityClass of the broker pod so other workloads can't preempt it; empty leaves the cluster default
+    priorityClassName: ""
+    # -- max unacknowledged bytes each distributor buffers for Kafka (Tempo default 1 GiB)
+    producerMaxBufferedBytes: 268435456
+
+  # -- requests of the Tempo components (the chart sets none, which makes them BestEffort: first to be evicted under
+  # node pressure). No limits yet: size those from observed usage.
+  resources:
+    distributor:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    liveStore:
+      requests:
+        cpu: 250m
+        memory: 1Gi
+    blockBuilder:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+    metricsGenerator:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    querier:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    queryFrontend:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+    backendScheduler:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+    backendWorker:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    gateway:
+      requests:
+        cpu: 50m
+        memory: 64Mi
 
 grafana:
   # @ignored

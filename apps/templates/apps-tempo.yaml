@@ -34,6 +34,11 @@ spec:
         tempo:
           structuredConfig:
             stream_over_http_enabled: true
+            ingest:
+              kafka:
+                # Unacknowledged records each distributor buffers for Kafka (default 1 GiB). While the broker is down,
+                # a smaller cap fails pushes fast (retryable Unavailable to the collector) instead of growing the heap.
+                producer_max_buffered_bytes: {{ .Values.tempo.kafka.producerMaxBufferedBytes | int64 }}
         overrides:
           defaults:
             ingestion:
@@ -49,6 +54,8 @@ spec:
               max_bytes_per_trace: 10000000
         metricsGenerator:
          enabled: true
+         resources:
+           {{- toYaml .Values.tempo.resources.metricsGenerator | nindent 11 }}
          config:
             processor:
               service_graphs:
@@ -79,9 +86,27 @@ spec:
             auto_create_topic_default_partitions: {{ .Values.tempo.kafka.partitions }}
         blockBuilder:
           replicas: {{ .Values.tempo.kafka.partitions }}
+          resources:
+            {{- toYaml .Values.tempo.resources.blockBuilder | nindent 12 }}
         liveStore:
           replicas: {{ .Values.tempo.kafka.partitions }}
+          resources:
+            {{- toYaml .Values.tempo.resources.liveStore | nindent 12 }}
+        distributor:
+          resources:
+            {{- toYaml .Values.tempo.resources.distributor | nindent 12 }}
+        querier:
+          resources:
+            {{- toYaml .Values.tempo.resources.querier | nindent 12 }}
+        queryFrontend:
+          resources:
+            {{- toYaml .Values.tempo.resources.queryFrontend | nindent 12 }}
+        backendWorker:
+          resources:
+            {{- toYaml .Values.tempo.resources.backendWorker | nindent 12 }}
         backendScheduler:
+          resources:
+            {{- toYaml .Values.tempo.resources.backendScheduler | nindent 12 }}
           config:
             provider:
               compaction:
@@ -91,6 +116,8 @@ spec:
 
         gateway:
           enabled: true
+          resources:
+            {{- toYaml .Values.tempo.resources.gateway | nindent 12 }}
         metaMonitoring:
           serviceMonitor:
             enabled: true
@@ -155,6 +182,20 @@ spec:
                 spec:
                   # Service links would inject *_PORT variables; the image turns every KAFKA_* variable into a setting.
                   enableServiceLinks: false
+                  {{- with .Values.tempo.kafka.priorityClassName }}
+                  priorityClassName: {{ . }}
+                  {{- end }}
+                  # The default 300s toleration keeps the pod bound to a dead node for ~6 min, longer than the
+                  # collectors' retry budget; with a short one it is rescheduled (on a fresh emptyDir) in ~1-2 min.
+                  tolerations:
+                    - key: node.kubernetes.io/not-ready
+                      operator: Exists
+                      effect: NoExecute
+                      tolerationSeconds: {{ .Values.tempo.kafka.nodeFailureTolerationSeconds }}
+                    - key: node.kubernetes.io/unreachable
+                      operator: Exists
+                      effect: NoExecute
+                      tolerationSeconds: {{ .Values.tempo.kafka.nodeFailureTolerationSeconds }}
                   securityContext:
                     runAsNonRoot: true
                     runAsUser: 1000
