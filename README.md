@@ -98,7 +98,7 @@ helm pull oci://ghcr.io/glueops/k8s-monitoring-helm/glueops-monitoring --version
 | loki.storage | object | `{}` | filled by the platform chart (`loki.storage`, from terraform `loki_storage`); empty for the same reason as thanos.storage. https://grafana.com/docs/loki/latest/configure/#storage_config |
 | otel.collector.path | string | `"."` |  |
 | otel.collector.repoURL | string | `"https://github.com/GlueOps/otel-resources-helm.git"` |  |
-| otel.collector.targetRevision | string | `"main"` |  |
+| otel.collector.targetRevision | string | `"feat/trace-exporter-retry-queue"` |  |
 | otel.config | string | `nil` |  |
 | otel.manager.autoInstrumentationImage.apacheHttpd.repository | string | `"ghcr.repo.gpkg.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd"` |  |
 | otel.manager.autoInstrumentationImage.apacheHttpd.tag | string | `"1.0.4@sha256:97ccd0c314b641ed36208502fb78490a030677c4923b03a0841d60ed01727081"` |  |
