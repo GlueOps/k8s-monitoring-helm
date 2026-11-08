@@ -3,5 +3,5 @@ name: glueops-monitoring
 description: GlueOps umbrella chart that deploys the cluster monitoring stack
   (Prometheus, Thanos, Loki, OpenTelemetry)
 type: application
-version: 0.1.0
+version: 0.2.0
 appVersion: "0.1.0"
