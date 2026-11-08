@@ -112,7 +112,8 @@ otel:
 
   collector:
     repoURL: https://github.com/GlueOps/otel-resources-helm.git
-    targetRevision: main
+    # TODO: back to main once GlueOps/otel-resources-helm feat/trace-exporter-retry-queue is merged
+    targetRevision: feat/trace-exporter-retry-queue
     path: .
 
   manager:
