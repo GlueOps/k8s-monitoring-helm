@@ -89,6 +89,10 @@ spec:
             max_query_parallelism: 4    # Limit concurrent queries
             max_query_series: 10000     # Prevent large query memory spikes
             max_streams_per_user: 1000  # Restrict high memory-consuming logs
+            # approx_topk (top-N over high-cardinality labels such as client IPs, without one series per value) is off
+            # unless sharded: "approx_topk is not enabled. See -limits.shard_aggregations".
+            shard_aggregations:
+              - approx_topk
           compactor:
             retention_enabled: true
             delete_request_store: s3   # required by Loki 3.x when retention is enabled
