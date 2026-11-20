@@ -33,7 +33,10 @@ a CRD older than the operator that serves it rejects fields the operator writes.
 the **image** actually running, `otel.manager.image.tag` in `apps/values.yaml` (renovate bumps that tag on its own,
 independently of the chart's `appVersion`), so the bundle pin must track that tag. The same bump must also move
 `otel.manager.autoInstrumentationImage.*` to the new tag's `versions.txt`, keeping the `ghcr.repo.gpkg.io` mirror and
-the digests: on restart the operator rewrites every `Instrumentation` still on the old default to the new one.
+the digests: on restart the operator rewrites every `Instrumentation` still on the old default to the new one, and a
+developer's tag-only pin is safe only because it differs from these digest defaults. The platform's `default-unpinned`
+Instrumentation pins its own agent images (GlueOps/otel-resources-helm `instrumentation.images`), so this bump does not
+change them: bump those separately to the same `versions.txt` (tag only), after reading the agents' release notes.
 
 Note: the bundle serves `OpenTelemetryCollector` **only as `v1beta1`** (the upstream `v1alpha1` needs the operator's
 conversion webhook, which the bundle cannot carry). Everything deployed from `GlueOps/otel-resources-helm` is
