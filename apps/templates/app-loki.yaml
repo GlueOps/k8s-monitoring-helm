@@ -71,6 +71,10 @@ spec:
           frontend:
             log_queries_longer_than: 5s
             compress_responses: true
+            # Loki 3.6 defaults to json, which sends sharded sub-queries to the queriers as text; approx_topk's
+            # __count_min_sketch__(...) sub-query then fails to parse there ("unexpected IDENTIFIER"). protobuf sends the
+            # parsed plan instead.
+            encoding: protobuf
             #cache_results: true
           runtimeConfig:
             overrides:
