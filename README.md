@@ -141,7 +141,7 @@ helm pull oci://ghcr.io/glueops/k8s-monitoring-helm/glueops-monitoring --version
 | prometheus.volume_claim_storage_request | string | `"50"` | Volume of storage requested for each Prometheus PVC, in Gi |
 | tempo.compaction_block_retention | string | `"168h"` |  |
 | tempo.kafka.heapOpts | string | `"-Xms1g -Xmx1g"` | JVM heap; keep it under the memory limit, the rest is page cache |
-| tempo.kafka.image | string | `"docker.io/apache/kafka:4.3.2@sha256:852a0d49fc4e656b022e7f23785411802c9a088c78a7c5e39f33969de9c227a7"` | broker image (KRaft, broker and controller in one process) |
+| tempo.kafka.image | string | `"docker.io/apache/kafka:4.4.0@sha256:833b867a9585a141da455dc2b57431c65cbccb27f11c91f694444cca9f777e0f"` | broker image (KRaft, broker and controller in one process) |
 | tempo.kafka.nodeFailureTolerationSeconds | int | `30` | seconds the broker stays bound to a NotReady/unreachable node before it is evicted and rescheduled (k8s default 300) |
 | tempo.kafka.partitions | int | `3` | partitions of the tempo-traces topic; block-builder and live-store run one replica per partition |
 | tempo.kafka.priorityClassName | string | `""` | PriorityClass of the broker pod so other workloads can't preempt it; empty leaves the cluster default |

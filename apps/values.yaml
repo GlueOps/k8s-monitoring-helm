@@ -185,7 +185,7 @@ tempo:
   # block-builders/live-stores. Nothing in it outlives a block-builder cycle, so it has no PVC.
   kafka:
     # -- broker image (KRaft, broker and controller in one process)
-    image: docker.io/apache/kafka:4.3.2@sha256:852a0d49fc4e656b022e7f23785411802c9a088c78a7c5e39f33969de9c227a7
+    image: docker.io/apache/kafka:4.4.0@sha256:833b867a9585a141da455dc2b57431c65cbccb27f11c91f694444cca9f777e0f
     # -- partitions of the tempo-traces topic; block-builder and live-store run one replica per partition
     partitions: 3
     # -- how long the broker keeps spans; only matters while block-builders are down
