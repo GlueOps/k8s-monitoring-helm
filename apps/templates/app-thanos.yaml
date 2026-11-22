@@ -35,7 +35,7 @@ spec:
   source:
     repoURL: 'https://thanos-community.github.io/helm-charts'
     chart: thanos
-    targetRevision: 0.47.2
+    targetRevision: 0.48.0
     helm:
       skipCrds: true
       values: |-
