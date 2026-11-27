@@ -113,7 +113,7 @@ otel:
   collector:
     repoURL: https://github.com/GlueOps/otel-resources-helm.git
     # TODO: back to main once GlueOps/otel-resources-helm feat/trace-exporter-retry-queue is merged
-    targetRevision: fix/spanmetrics-drop-ip-dimensions
+    targetRevision: 58cb7510a4ae324b0dfe292facbb35221fecedf8
     path: .
 
   manager:
